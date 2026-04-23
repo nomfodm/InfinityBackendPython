@@ -27,5 +27,7 @@ class SessionRepository(Protocol):
     async def delete_invalid_by_user_id(self, *, user_id: int) -> None:
         pass
 
+    async def get_all_by_user_id(self, *, user_id: int) -> list[Session]:
+        pass
 
 
