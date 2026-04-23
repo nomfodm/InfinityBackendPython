@@ -10,7 +10,7 @@ class TextureCatalogRepository(Protocol):
 
     async def get_by_id_or_raise(self, *, id: int) -> TextureCatalogItem:
         texture_cat_item = await self.get_by_id(id=id)
-        if not texture_cat_item:
+        if texture_cat_item is None:
             raise TextureCatalogItemNotFoundError("Такой текстуры нет в каталоге.")
         return texture_cat_item
 

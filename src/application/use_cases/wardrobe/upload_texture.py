@@ -36,7 +36,7 @@ class UploadTextureUseCase:
         async with self._uow:
             texture = await self._uow.textures.get_texture_by_hash(hash_sha256=texture_hash)
 
-            if not texture:
+            if texture is None:
                 url = self._file_storage.upload_file(file_bytes=dto.file_bytes, content_type="image/png",
                                                      destination_path=get_texture_path(texture_hash, dto.type))
 

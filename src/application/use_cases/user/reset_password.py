@@ -26,7 +26,7 @@ class ResetPasswordUseCase:
                 email=dto.email,
                 purpose=VerificationCodePurpose.PASSWORD_RESET,
             )
-            if not code or code != dto.verification_code:
+            if code is None or code != dto.verification_code:
                 raise InvalidVerificationCode("Неверный код подтверждения.")
 
             user = await self._uow.users.get_by_email(email=dto.email)

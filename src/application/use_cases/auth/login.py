@@ -23,7 +23,7 @@ class LoginUseCase:
     async def execute(self, *, dto: UserLoginRequest) -> TokenPairResponse:
         async with self._uow:
             user = await self._uow.users.get_by_username(username=dto.username)
-            if not user:
+            if user is None:
                 raise InvalidCredentialError("Неверные логин или пароль.")
 
             if not self._hasher.verify(raw=dto.password, hashed=user.password_hash):

@@ -9,5 +9,7 @@ class Session:
     refresh_token_hash: str
     expires_at: datetime.datetime
     is_revoked: bool = False
+
+    last_used_at: datetime.datetime | None = None
     id: uuid.UUID | None = None
     

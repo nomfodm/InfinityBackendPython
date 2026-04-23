@@ -14,7 +14,7 @@ class MinecraftSessionRepository(Protocol):
 
     async def get_by_profile_uuid_or_raise(self, *, profile_uuid: UUID) -> MinecraftSession:
         mc_session = await self.get_by_profile_uuid(profile_uuid=profile_uuid)
-        if not mc_session:
+        if mc_session is None:
             raise MinecraftSessionNotFoundError("Игровой сессии для этого пользователя нет.")
         return mc_session
 

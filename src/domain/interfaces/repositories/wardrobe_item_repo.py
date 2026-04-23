@@ -10,7 +10,7 @@ class WardrobeItemRepository(Protocol):
 
     async def get_by_id_from_user_wardrobe_or_raise(self, *, id: int, user_id: int) -> WardrobeItem:
         item = await self.get_by_id_from_user_wardrobe(id=id, user_id=user_id)
-        if not item:
+        if item is None:
             raise WardrobeItemNotFoundError("Предмет гардероба не найден.")
         return item
 

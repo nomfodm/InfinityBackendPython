@@ -14,7 +14,7 @@ class SessionRepository(Protocol):
 
     async def get_by_id_or_raise(self, *, uuid: uuid.UUID) -> Session:
         session = await self.get_by_id(uuid=uuid)
-        if not session:
+        if session is None:
             raise SessionNotFoundError("Сессия не найдена.")
         return session
 

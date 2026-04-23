@@ -15,7 +15,7 @@ class MinecraftProfileRepository(Protocol):
 
     async def get_by_user_id_or_raise(self, *, user_id: int) -> MinecraftProfile:
         mc_profile = await self.get_by_user_id(user_id=user_id)
-        if not mc_profile:
+        if mc_profile is None:
             raise MinecraftProfileNotFoundError("По непонятной причине, профиля для этого пользователя нет.")
         return mc_profile
 
@@ -24,7 +24,7 @@ class MinecraftProfileRepository(Protocol):
 
     async def get_by_uuid_or_raise(self, *, uuid: uuid.UUID) -> MinecraftProfile:
         mc_profile = await self.get_by_uuid(uuid=uuid)
-        if not mc_profile:
+        if mc_profile is None:
             raise MinecraftProfileNotFoundError("По непонятной причине, профиля для этого пользователя нет.")
         return mc_profile
 
@@ -33,6 +33,6 @@ class MinecraftProfileRepository(Protocol):
 
     async def get_by_nickname_or_raise(self, *, nickname: UserRelatedHandle) -> MinecraftProfile:
         mc_profile = await self.get_by_nickname(nickname=nickname)
-        if not mc_profile:
+        if mc_profile is None:
             raise MinecraftProfileNotFoundError("По непонятной причине, профиля для этого пользователя нет.")
         return mc_profile
