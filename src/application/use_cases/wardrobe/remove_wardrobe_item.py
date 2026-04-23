@@ -5,9 +5,11 @@ from application.dtos.common import StatusResponse
 from domain.entities.user import User
 from domain.interfaces.unit_of_work import UnitOfWork
 
+
 @dataclass
 class RemoveWardrobeItemRequest:
     id: int
+
 
 class RemoveWardrobeItemUseCase:
     def __init__(self, *, uow: UnitOfWork):
@@ -20,4 +22,3 @@ class RemoveWardrobeItemUseCase:
             await self._uow.wardrobe.delete(item=item)
             await self._uow.commit()
             return StatusResponse()
-

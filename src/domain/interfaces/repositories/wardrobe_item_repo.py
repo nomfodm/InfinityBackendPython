@@ -22,6 +22,3 @@ class WardrobeItemRepository(Protocol):
 
     async def get_user_wardrobe(self, *, user_id: int) -> list[WardrobeItem]:
         pass
-
-
-

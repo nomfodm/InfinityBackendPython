@@ -50,13 +50,21 @@ class MeUseCase:
 
             wardrobe = await self._uow.wardrobe.get_user_wardrobe(user_id=user.id)
 
-            active_skin = await self._uow.wardrobe.get_by_id_from_user_wardrobe_or_raise(
-                id=mc_profile.active_skin_id,
-                user_id=mc_profile.user_id) if mc_profile.active_skin_id is not None else None
+            active_skin = (
+                await self._uow.wardrobe.get_by_id_from_user_wardrobe_or_raise(
+                    id=mc_profile.active_skin_id, user_id=mc_profile.user_id
+                )
+                if mc_profile.active_skin_id is not None
+                else None
+            )
 
-            active_cape = await self._uow.wardrobe.get_by_id_from_user_wardrobe_or_raise(
-                id=mc_profile.active_cape_id,
-                user_id=mc_profile.user_id) if mc_profile.active_cape_id is not None else None
+            active_cape = (
+                await self._uow.wardrobe.get_by_id_from_user_wardrobe_or_raise(
+                    id=mc_profile.active_cape_id, user_id=mc_profile.user_id
+                )
+                if mc_profile.active_cape_id is not None
+                else None
+            )
 
             return UserResponse(
                 id=user.id,
@@ -66,11 +74,10 @@ class MeUseCase:
                 ban_status=BanStatusResponse(
                     is_banned=user.ban_status.is_banned,
                     is_permanent=user.ban_status.is_permanent,
-                    banned_till=user.ban_status.banned_till
+                    banned_till=user.ban_status.banned_till,
                 ),
                 is_active=user.is_active,
                 registered_at=user.registered_at,
-
                 minecraft_profile=MinecraftProfileResponse(
                     id=mc_profile.id,
                     user_id=mc_profile.user_id,
@@ -78,6 +85,6 @@ class MeUseCase:
                     nickname=mc_profile.nickname.value,
                     wardrobe=[WardrobeItemResponse.from_domain(item) for item in wardrobe],
                     active_cape=WardrobeItemResponse.from_domain(active_cape) if active_cape else None,
-                    active_skin=WardrobeItemResponse.from_domain(active_skin) if active_skin else None
-                )
+                    active_skin=WardrobeItemResponse.from_domain(active_skin) if active_skin else None,
+                ),
             )

@@ -1,4 +1,4 @@
-from application.dtos.auth import TokenPairResponse, SessionCredentials
+from application.dtos.auth import SessionCredentials, TokenPairResponse
 from application.services.auth import AuthService
 from domain.interfaces.unit_of_work import UnitOfWork
 
@@ -23,11 +23,4 @@ class RefreshSessionUseCase:
 
             await self._uow.commit()
 
-            return TokenPairResponse(
-                access_token=access_token,
-                refresh_split_token=f"{session.id}.{refresh_token}"
-            )
-
-
-
-
+            return TokenPairResponse(access_token=access_token, refresh_split_token=f"{session.id}.{refresh_token}")

@@ -18,7 +18,3 @@ class LogoutUseCase:
 
             await self._uow.commit()
             return StatusResponse()
-
-
-
-

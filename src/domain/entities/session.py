@@ -1,6 +1,6 @@
-from dataclasses import dataclass
 import datetime
 import uuid
+from dataclasses import dataclass
 
 
 @dataclass
@@ -15,4 +15,3 @@ class Session:
     ip_address: str | None = None
     last_used_at: datetime.datetime | None = None
     id: uuid.UUID | None = None
-    

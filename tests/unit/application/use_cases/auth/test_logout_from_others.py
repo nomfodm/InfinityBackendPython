@@ -43,7 +43,9 @@ def mock_uow(mock_uow: UnitOfWork, fake_session: Session, fake_user: User):
 
 
 @pytest.mark.asyncio
-async def test_logout_from_others_success(mock_uow: UnitOfWork, uc: LogoutFromOthersUseCase, dto: LogoutFromOthersRequest, fake_session: Session):
+async def test_logout_from_others_success(
+    mock_uow: UnitOfWork, uc: LogoutFromOthersUseCase, dto: LogoutFromOthersRequest, fake_session: Session
+):
     await uc.execute(dto=dto)
 
     mock_uow.sessions.delete_others_by_user_id.assert_awaited_once_with(
@@ -53,7 +55,9 @@ async def test_logout_from_others_success(mock_uow: UnitOfWork, uc: LogoutFromOt
 
 
 @pytest.mark.asyncio
-async def test_logout_from_others_fails_on_wrong_password(mock_uow: UnitOfWork, mock_auth_service: AuthService, fake_session: Session, fake_user: User, mocker):
+async def test_logout_from_others_fails_on_wrong_password(
+    mock_uow: UnitOfWork, mock_auth_service: AuthService, fake_session: Session, fake_user: User, mocker
+):
     mock_uow.sessions.get_by_id_or_raise = AsyncMock(return_value=fake_session)
     mock_uow.users.get_by_id = AsyncMock(return_value=fake_user)
     hasher = mocker.MagicMock(spec=StringHasher)
@@ -61,9 +65,11 @@ async def test_logout_from_others_fails_on_wrong_password(mock_uow: UnitOfWork, 
     uc = LogoutFromOthersUseCase(uow=mock_uow, auth_service=mock_auth_service, hasher=hasher)
 
     with pytest.raises(AccessDeniedError):
-        await uc.execute(dto=LogoutFromOthersRequest(
-            password="wrong_password",
-            session_credentials=SessionCredentials(id=uuid.uuid4(), refresh_token="refresh_token"),
-        ))
+        await uc.execute(
+            dto=LogoutFromOthersRequest(
+                password="wrong_password",
+                session_credentials=SessionCredentials(id=uuid.uuid4(), refresh_token="refresh_token"),
+            )
+        )
 
     mock_uow.commit.assert_not_called()

@@ -1,11 +1,11 @@
-from dataclasses import dataclass, field
 import datetime
 import enum
+from dataclasses import dataclass, field
 
-from domain.entities.base import UserRelatedHandle, Email
+from domain.entities.base import Email, UserRelatedHandle
 
 
-class Role(str, enum.Enum):
+class Role(enum.StrEnum):
     PLAYER = "player"
     ADMIN = "admin"
 
@@ -15,6 +15,7 @@ class BanStatus:
     is_banned: bool = False
     is_permanent: bool = False
     banned_till: datetime.datetime | None = None
+
 
 @dataclass
 class User:
@@ -30,4 +31,3 @@ class User:
     is_active: bool = False
 
     id: int | None = None
-

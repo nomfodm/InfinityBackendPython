@@ -9,4 +9,3 @@ class TextureRepository(Protocol):
 
     async def save(self, *, texture: Texture) -> Texture:
         pass
-

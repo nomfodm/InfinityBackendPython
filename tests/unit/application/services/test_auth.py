@@ -10,8 +10,12 @@ from application.constants import ACCESS_TOKEN_EXPIRES_MINUTES, REFRESH_TOKEN_EX
 from application.dtos.auth import TokenPairResponse
 from application.services.auth import AuthService, SessionTokensDTO
 from domain.entities.session import Session
-from domain.exceptions.session import SessionExpiredError, SessionNotFoundError, SessionRevokedError, \
-    TokenAuthenticityError
+from domain.exceptions.session import (
+    SessionExpiredError,
+    SessionNotFoundError,
+    SessionRevokedError,
+    TokenAuthenticityError,
+)
 from domain.interfaces.services.string_hasher import StringHasher
 from domain.interfaces.services.token_service import TokenService
 
@@ -37,27 +41,21 @@ def mock_hasher_service(mocker: MockerFixture) -> StringHasher:
 
 
 @pytest.fixture
-def service(mock_token_service: TokenService,
-            mock_hasher_service: StringHasher):
-    return AuthService(
-        token_service=mock_token_service,
-        token_hasher=mock_hasher_service
-    )
+def service(mock_token_service: TokenService, mock_hasher_service: StringHasher):
+    return AuthService(token_service=mock_token_service, token_hasher=mock_hasher_service)
 
 
-def test_generate_access_token(service: AuthService,
-                               mock_token_service: TokenService):
+def test_generate_access_token(service: AuthService, mock_token_service: TokenService):
     result = service.generate_access_token(user_id=1)
 
     assert result == "access_token"
 
     mock_token_service.generate_access_token.assert_called_once_with(
-        data={"sub": "1"},
-        expires_in_minutes=ACCESS_TOKEN_EXPIRES_MINUTES
+        data={"sub": "1"}, expires_in_minutes=ACCESS_TOKEN_EXPIRES_MINUTES
     )
 
-def test_generate_refresh_token(service: AuthService,
-                               mock_token_service: TokenService):
+
+def test_generate_refresh_token(service: AuthService, mock_token_service: TokenService):
     result = service.generate_refresh_token()
 
     assert result[0] == "refresh_token"
@@ -67,30 +65,31 @@ def test_generate_refresh_token(service: AuthService,
     mock_token_service.generate_refresh_token.assert_called_once()
 
 
-def test_verify_session_success(service: AuthService,
-                                fake_session: Session):
+def test_verify_session_success(service: AuthService, fake_session: Session):
     fake_session.expires_at += timedelta(days=1)
     service.verify_session(refresh_token="refresh_token", session=fake_session)
+
 
 def test_verify_session_fails_not_found(service: AuthService):
     with pytest.raises(SessionNotFoundError):
         service.verify_session(refresh_token="refresh_token", session=None)
 
-def test_verify_session_fails_revoked(service: AuthService,
-                                fake_session: Session):
+
+def test_verify_session_fails_revoked(service: AuthService, fake_session: Session):
     fake_session.is_revoked = True
     with pytest.raises(SessionRevokedError):
         service.verify_session(refresh_token="refresh_token", session=fake_session)
 
-def test_verify_session_fails_expired(service: AuthService,
-                                fake_session: Session):
+
+def test_verify_session_fails_expired(service: AuthService, fake_session: Session):
     fake_session.expires_at -= timedelta(days=5)
     with pytest.raises(SessionExpiredError):
         service.verify_session(refresh_token="refresh_token", session=fake_session)
 
-def test_verify_session_fails_not_verified(service: AuthService,
-                                           fake_session: Session,
-                                           mock_hasher_service: StringHasher):
+
+def test_verify_session_fails_not_verified(
+    service: AuthService, fake_session: Session, mock_hasher_service: StringHasher
+):
     mock_hasher_service.verify.return_value = False
     with pytest.raises(TokenAuthenticityError):
         service.verify_session(refresh_token="refresh_token", session=fake_session)
@@ -107,16 +106,11 @@ def test_create_session_and_tokens(mocker: MockerFixture, service: AuthService):
     result = service.create_session_and_tokens(user_id=1)
 
     assert result == SessionTokensDTO(
-        tokens=TokenPairResponse(
-            access_token="access_token",
-            refresh_split_token=f"{fixed_uuid}.refresh_token"
-        ),
+        tokens=TokenPairResponse(access_token="access_token", refresh_split_token=f"{fixed_uuid}.refresh_token"),
         session=Session(
             refresh_token_hash="[hashed]refresh_token",
             expires_at=fixed_date + timedelta(days=REFRESH_TOKEN_EXPIRES_DAYS),
             user_id=1,
-            id=fixed_uuid
-        )
+            id=fixed_uuid,
+        ),
     )
-
-

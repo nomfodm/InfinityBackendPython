@@ -6,8 +6,12 @@ from datetime import UTC, timedelta
 from application.constants import ACCESS_TOKEN_EXPIRES_MINUTES, REFRESH_TOKEN_EXPIRES_DAYS
 from application.dtos.auth import TokenPairResponse
 from domain.entities.session import Session
-from domain.exceptions.session import SessionRevokedError, SessionExpiredError, TokenAuthenticityError, \
-    SessionNotFoundError
+from domain.exceptions.session import (
+    SessionExpiredError,
+    SessionNotFoundError,
+    SessionRevokedError,
+    TokenAuthenticityError,
+)
 from domain.interfaces.services.string_hasher import StringHasher
 from domain.interfaces.services.token_service import TokenService
 
@@ -19,9 +23,7 @@ class SessionTokensDTO:
 
 
 class AuthService:
-    def __init__(self, *,
-                 token_hasher: StringHasher,
-                 token_service: TokenService):
+    def __init__(self, *, token_hasher: StringHasher, token_service: TokenService):
         self._token_hasher = token_hasher
         self._token_service = token_service
 
@@ -30,18 +32,14 @@ class AuthService:
         refresh_token, refresh_token_expires_at, refresh_token_hash = self.generate_refresh_token()
 
         new_session = Session(
-            user_id=user_id,
-            refresh_token_hash=refresh_token_hash,
-            expires_at=refresh_token_expires_at,
-            id=uuid.uuid4()
+            user_id=user_id, refresh_token_hash=refresh_token_hash, expires_at=refresh_token_expires_at, id=uuid.uuid4()
         )
 
         return SessionTokensDTO(
             tokens=TokenPairResponse(
-                access_token=access_token,
-                refresh_split_token=f"{new_session.id}.{refresh_token}"
+                access_token=access_token, refresh_split_token=f"{new_session.id}.{refresh_token}"
             ),
-            session=new_session
+            session=new_session,
         )
 
     def verify_session(self, *, refresh_token: str, session: Session | None):
@@ -59,8 +57,7 @@ class AuthService:
 
     def generate_access_token(self, *, user_id: int) -> str:
         access_token = self._token_service.generate_access_token(
-            data={"sub": str(user_id)},
-            expires_in_minutes=ACCESS_TOKEN_EXPIRES_MINUTES
+            data={"sub": str(user_id)}, expires_in_minutes=ACCESS_TOKEN_EXPIRES_MINUTES
         )
         return access_token
 

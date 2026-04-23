@@ -1,7 +1,7 @@
 from functools import wraps
 
 from domain.entities.user import User
-from domain.exceptions.auth import UnauthenticatedError, UserNeedsActivationError, UserBannedError
+from domain.exceptions.auth import UnauthenticatedError, UserBannedError, UserNeedsActivationError
 
 
 def require_login(func):
@@ -23,4 +23,5 @@ def require_login(func):
                 raise UserBannedError(f"Пользователь временно заблокирован (до {ban_status.banned_till})")
 
         return func(self, *args, **kwargs)
+
     return wrapper

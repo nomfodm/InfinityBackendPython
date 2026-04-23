@@ -6,6 +6,7 @@ from domain.entities.base import ContentLabel
 from domain.entities.user import User
 from domain.interfaces.unit_of_work import UnitOfWork
 
+
 @dataclass
 class EditWardrobeItemRequest:
     id: int
@@ -26,5 +27,3 @@ class EditWardrobeItemUseCase:
 
             await self._uow.commit()
             return WardrobeItemResponse.from_domain(edited)
-
-

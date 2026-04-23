@@ -30,6 +30,3 @@ class EditTextureCatalogItemUseCase:
 
             await self._uow.commit()
             return TextureCatalogItemResponse.from_domain(edited)
-
-
-

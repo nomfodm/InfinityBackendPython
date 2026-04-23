@@ -5,7 +5,6 @@ from application.services.auth import AuthService
 from domain.entities.base import UserRelatedHandle
 from domain.exceptions.auth import InvalidCredentialError
 from domain.interfaces.services.string_hasher import StringHasher
-from domain.interfaces.services.token_service import TokenService
 from domain.interfaces.unit_of_work import UnitOfWork
 
 
@@ -13,6 +12,7 @@ from domain.interfaces.unit_of_work import UnitOfWork
 class UserLoginRequest:
     username: UserRelatedHandle
     password: str
+
 
 class LoginUseCase:
     def __init__(self, *, uow: UnitOfWork, hasher: StringHasher, auth_service: AuthService):
@@ -37,6 +37,3 @@ class LoginUseCase:
 
             await self._uow.commit()
             return session_tokens.tokens
-
-
-

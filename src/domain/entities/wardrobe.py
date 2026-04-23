@@ -1,16 +1,16 @@
 from dataclasses import dataclass
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from domain.entities.base import ContentLabel, Url
 
 
-class TextureType(str, Enum):
+class TextureType(StrEnum):
     SKIN = "skin"
     CAPE = "cape"
 
 
-class SkinModel(str, Enum):
+class SkinModel(StrEnum):
     CLASSIC = "classic"
     SLIM = "slim"
 
@@ -50,4 +50,3 @@ class WardrobeItem:
     label: ContentLabel
 
     id: int | None = None
-

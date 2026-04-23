@@ -13,6 +13,7 @@ class ChangePasswordRequest:
     old_password: str
     new_password: str
 
+
 class ChangePasswordUseCase:
     def __init__(self, *, uow: UnitOfWork, hasher: StringHasher):
         self._uow = uow
@@ -29,6 +30,3 @@ class ChangePasswordUseCase:
             await self._uow.users.save(user=user)
             await self._uow.commit()
             return StatusResponse()
-
-
-

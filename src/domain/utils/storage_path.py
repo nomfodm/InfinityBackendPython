@@ -1,9 +1,7 @@
 from domain.entities.wardrobe import TextureType
 
-_PLURAL = {
-    TextureType.SKIN: "skins",
-    TextureType.CAPE: "capes"
-}
+_PLURAL = {TextureType.SKIN: "skins", TextureType.CAPE: "capes"}
+
 
 def get_texture_path(file_hash: str, type: TextureType) -> str:
     return f"{_PLURAL[type]}/{file_hash[:2]}/{file_hash}"

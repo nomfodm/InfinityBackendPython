@@ -251,7 +251,9 @@ async def test_edit_texture_catalog_item_fails_for_non_author(mock_uow: UnitOfWo
     uc = EditTextureCatalogItemUseCase(uow=mock_uow)
 
     with pytest.raises(AccessDeniedError):
-        await uc.execute(dto=EditTextureCatalogItemRequest(id=item.id, title=ContentLabel("New title")), user=active_user)
+        await uc.execute(
+            dto=EditTextureCatalogItemRequest(id=item.id, title=ContentLabel("New title")), user=active_user
+        )
 
     mock_uow.texture_catalog.save.assert_not_called()
 

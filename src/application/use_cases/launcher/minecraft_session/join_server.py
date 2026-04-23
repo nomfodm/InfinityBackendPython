@@ -20,7 +20,9 @@ class JoinServerUseCase:
 
     async def execute(self, *, dto: JoinServerRequest) -> StatusResponse:
         async with self._uow:
-            mc_session = await self._uow.minecraft_sessions.get_by_profile_uuid_or_raise(profile_uuid=dto.selected_profile)
+            mc_session = await self._uow.minecraft_sessions.get_by_profile_uuid_or_raise(
+                profile_uuid=dto.selected_profile
+            )
 
             if mc_session.access_token != dto.access_token:
                 raise InvalidMCAccessToken("Неверный токен доступа.")
@@ -31,4 +33,3 @@ class JoinServerUseCase:
 
             await self._uow.commit()
             return StatusResponse()
-

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from domain.entities.base import UserRelatedHandle, MCAccessToken, MCServerID
+from domain.entities.base import MCAccessToken, MCServerID, UserRelatedHandle
 
 
 @dataclass

@@ -1,6 +1,6 @@
 import enum
 
 
-class VerificationCodePurpose(str, enum.Enum):
+class VerificationCodePurpose(enum.StrEnum):
     ACTIVATION = "activation"
     PASSWORD_RESET = "password_reset"

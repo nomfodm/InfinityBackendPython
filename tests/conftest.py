@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timedelta, UTC
+from datetime import UTC, datetime, timedelta
 from typing import cast
 
 import pytest
@@ -32,6 +32,7 @@ def mock_uow(mocker: MockerFixture) -> UnitOfWork:
 
     return cast(UnitOfWork, uow)
 
+
 @pytest.fixture
 def fake_session():
     return Session(
@@ -39,7 +40,7 @@ def fake_session():
         user_id=1,
         is_revoked=False,
         expires_at=datetime.now(UTC) + timedelta(days=1),
-        refresh_token_hash="refresh_token_hash"
+        refresh_token_hash="refresh_token_hash",
     )
 
 
@@ -50,7 +51,7 @@ def fake_user():
         email=Email("test@test.com"),
         username=UserRelatedHandle("tester"),
         password_hash="hash",
-        registered_at=datetime.now(UTC)
+        registered_at=datetime.now(UTC),
     )
 
 
@@ -58,4 +59,3 @@ def fake_user():
 def active_user(fake_user: User) -> User:
     fake_user.is_active = True
     return fake_user
-

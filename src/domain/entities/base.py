@@ -9,7 +9,7 @@ class IdentName:
     value: str
 
     def __post_init__(self):
-        object.__setattr__(self, 'value', self.value.strip())
+        object.__setattr__(self, "value", self.value.strip())
         self._validate()
 
     def _validate(self):
@@ -26,7 +26,8 @@ class UserRelatedHandle(IdentName):
     def _validate(self):
         if not self._pattern.match(self.value):
             raise ValidationError(
-                "Имя пользователя должно быть от 4 до 12 символов, состоять только из букв и не начинаться с цифры.")
+                "Имя пользователя должно быть от 4 до 12 символов, состоять только из букв и не начинаться с цифры."
+            )
 
 
 @dataclass(frozen=True)
@@ -35,8 +36,7 @@ class ContentLabel(IdentName):
 
     def _validate(self):
         if not self._pattern.match(self.value):
-            raise ValidationError(
-                "Название должно быть от 3 до 64 символов и начинаться с буквы или цифры.")
+            raise ValidationError("Название должно быть от 3 до 64 символов и начинаться с буквы или цифры.")
 
 
 @dataclass(frozen=True)
@@ -47,15 +47,18 @@ class Email(IdentName):
         if not self._pattern.match(self.value):
             raise ValidationError(f"Неверный формат E-mail ({self.value}).")
 
+
 @dataclass(frozen=True)
 class Url(IdentName):
     _pattern = re.compile(
-        r'^(https?|ftp)://'  # протоколы
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # домен
-        r'localhost|'  # localhost
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # или ip
-        r'(?::\d+)?'  # порт
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+        r"^(https?|ftp)://"  # протоколы
+        r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # домен
+        r"localhost|"  # localhost
+        r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # или ip
+        r"(?::\d+)?"  # порт
+        r"(?:/?|[/?]\S+)$",
+        re.IGNORECASE,
+    )
 
     def _validate(self):
         if not self._pattern.match(self.value):

@@ -1,11 +1,9 @@
-import datetime
 from typing import cast
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
 
-from application.dtos.auth import TokenPairResponse
 from application.services.auth import AuthService
 from application.use_cases.auth.login import LoginUseCase, UserLoginRequest
 from domain.entities.base import UserRelatedHandle
@@ -22,10 +20,7 @@ def uc(mock_hasher: StringHasher, mock_auth_service: AuthService, mock_uow: Unit
 
 @pytest.fixture
 def dto():
-    return UserLoginRequest(
-        username=UserRelatedHandle("tester"),
-        password="password"
-    )
+    return UserLoginRequest(username=UserRelatedHandle("tester"), password="password")
 
 
 @pytest.fixture
@@ -45,10 +40,9 @@ def mock_hasher(mocker: MockerFixture) -> StringHasher:
 
 
 @pytest.mark.asyncio
-async def test_login_success(mock_uow: UnitOfWork,
-                             uc: LoginUseCase,
-                             mock_auth_service: AuthService,
-                             dto: UserLoginRequest):
+async def test_login_success(
+    mock_uow: UnitOfWork, uc: LoginUseCase, mock_auth_service: AuthService, dto: UserLoginRequest
+):
     result = await uc.execute(dto=dto)
 
     mock_auth_service.create_session_and_tokens.assert_called_once_with(user_id=1)
@@ -60,9 +54,9 @@ async def test_login_success(mock_uow: UnitOfWork,
 
 
 @pytest.mark.asyncio
-async def test_login_success_fails_invalid_credential_by_user(mock_uow: UnitOfWork,
-                                                              uc: LoginUseCase,
-                                                              dto: UserLoginRequest):
+async def test_login_success_fails_invalid_credential_by_user(
+    mock_uow: UnitOfWork, uc: LoginUseCase, dto: UserLoginRequest
+):
     mock_uow.users.get_by_username.return_value = None
 
     with pytest.raises(InvalidCredentialError):
@@ -72,10 +66,9 @@ async def test_login_success_fails_invalid_credential_by_user(mock_uow: UnitOfWo
 
 
 @pytest.mark.asyncio
-async def test_login_success_fails_invalid_credential_by_hasher(mock_uow: UnitOfWork,
-                                                                uc: LoginUseCase,
-                                                                mock_hasher: StringHasher,
-                                                                dto: UserLoginRequest):
+async def test_login_success_fails_invalid_credential_by_hasher(
+    mock_uow: UnitOfWork, uc: LoginUseCase, mock_hasher: StringHasher, dto: UserLoginRequest
+):
     mock_hasher.verify.return_value = False
 
     with pytest.raises(InvalidCredentialError):

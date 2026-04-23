@@ -30,7 +30,9 @@ async def test_refresh_session_fails_and_skips_commit(
 
 
 @pytest.mark.asyncio
-async def test_logout_calls_delete_with_session(mock_uow: UnitOfWork, mock_auth_service: AuthService, fake_session: Session):
+async def test_logout_calls_delete_with_session(
+    mock_uow: UnitOfWork, mock_auth_service: AuthService, fake_session: Session
+):
     mock_uow.sessions.get_by_id_or_raise = AsyncMock(return_value=fake_session)
     uc = LogoutUseCase(uow=mock_uow, auth_service=mock_auth_service)
 
@@ -40,17 +42,21 @@ async def test_logout_calls_delete_with_session(mock_uow: UnitOfWork, mock_auth_
 
 
 @pytest.mark.asyncio
-async def test_logout_from_others_calls_delete_others(mock_uow: UnitOfWork, mock_auth_service: AuthService, fake_session: Session, fake_user: User, mocker):
+async def test_logout_from_others_calls_delete_others(
+    mock_uow: UnitOfWork, mock_auth_service: AuthService, fake_session: Session, fake_user: User, mocker
+):
     mock_uow.sessions.get_by_id_or_raise = AsyncMock(return_value=fake_session)
     mock_uow.users.get_by_id = AsyncMock(return_value=fake_user)
     hasher = mocker.MagicMock()
     hasher.verify.return_value = True
     uc = LogoutFromOthersUseCase(uow=mock_uow, auth_service=mock_auth_service, hasher=hasher)
 
-    await uc.execute(dto=LogoutFromOthersRequest(
-        password="correct_password",
-        session_credentials=SessionCredentials(id=uuid.uuid4(), refresh_token="refresh_token"),
-    ))
+    await uc.execute(
+        dto=LogoutFromOthersRequest(
+            password="correct_password",
+            session_credentials=SessionCredentials(id=uuid.uuid4(), refresh_token="refresh_token"),
+        )
+    )
 
     mock_uow.sessions.delete_others_by_user_id.assert_awaited_once_with(
         user_id=fake_session.user_id, exclude_session_id=fake_session.id

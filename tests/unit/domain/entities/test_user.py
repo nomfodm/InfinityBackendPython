@@ -1,6 +1,6 @@
 import pytest
 
-from domain.entities.base import UserRelatedHandle, Email
+from domain.entities.base import Email, UserRelatedHandle
 from domain.exceptions.base import ValidationError
 
 
@@ -22,6 +22,7 @@ def test_username_validation_success():
     username = UserRelatedHandle("infinity")
     assert str(username) == "infinity"
 
+
 def test_username_validation_fails():
     with pytest.raises(ValidationError):
         UserRelatedHandle("fdf")
@@ -29,4 +30,3 @@ def test_username_validation_fails():
         UserRelatedHandle("fdffsdfsdfsdfsdfsdfsdfsdsd")
     with pytest.raises(ValidationError):
         UserRelatedHandle("fd233-4sd")
-

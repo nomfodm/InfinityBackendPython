@@ -17,10 +17,8 @@ def uc(mock_auth_service: AuthService, mock_uow: UnitOfWork):
 
 @pytest.fixture
 def dto():
-    return SessionCredentials(
-        id=uuid.uuid4(),
-        refresh_token="refresh_token"
-    )
+    return SessionCredentials(id=uuid.uuid4(), refresh_token="refresh_token")
+
 
 @pytest.fixture
 def mock_uow(mock_uow: UnitOfWork, fake_session: Session):
@@ -29,14 +27,14 @@ def mock_uow(mock_uow: UnitOfWork, fake_session: Session):
     return mock_uow
 
 
-
-
 @pytest.mark.asyncio
-async def test_refresh_session_success(mock_uow: UnitOfWork,
-                                       uc: RefreshSessionUseCase,
-                                       mock_auth_service: AuthService,
-                                       dto: SessionCredentials,
-                                       fake_session: Session):
+async def test_refresh_session_success(
+    mock_uow: UnitOfWork,
+    uc: RefreshSessionUseCase,
+    mock_auth_service: AuthService,
+    dto: SessionCredentials,
+    fake_session: Session,
+):
     result = await uc.execute(dto=dto)
 
     mock_auth_service.generate_access_token.assert_called_once_with(user_id=1)

@@ -26,4 +26,3 @@ class UnpublishTextureUseCase:
 
             await self._uow.commit()
             return StatusResponse()
-

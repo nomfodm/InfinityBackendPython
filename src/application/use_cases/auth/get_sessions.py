@@ -42,7 +42,4 @@ class GetSessionsUseCase:
 
             all_sessions = await self._uow.sessions.get_all_by_user_id(user_id=session.user_id)
 
-            return [
-                SessionResponse.from_domain(session=s, is_current=s.id == session.id)
-                for s in all_sessions
-            ]
+            return [SessionResponse.from_domain(session=s, is_current=s.id == session.id) for s in all_sessions]

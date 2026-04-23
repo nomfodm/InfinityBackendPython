@@ -2,10 +2,11 @@ from dataclasses import dataclass
 
 from application.decorators.auth import require_login
 from application.dtos.common import StatusResponse
-from domain.entities.user import User
 from domain.entities.base import UserRelatedHandle
+from domain.entities.user import User
 from domain.exceptions.user import NicknameTakenError
 from domain.interfaces.unit_of_work import UnitOfWork
+
 
 @dataclass(frozen=True)
 class ChangeNicknameRequest:

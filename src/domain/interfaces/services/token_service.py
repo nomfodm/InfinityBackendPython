@@ -10,4 +10,3 @@ class TokenService(Protocol):
 
     def decode_access_token(self, *, token: str) -> dict:
         pass
-

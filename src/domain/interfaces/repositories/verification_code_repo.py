@@ -10,4 +10,3 @@ class VerificationCodeRepository(Protocol):
 
     async def get_code(self, *, email: Email, purpose: VerificationCodePurpose) -> str | None:
         pass
-

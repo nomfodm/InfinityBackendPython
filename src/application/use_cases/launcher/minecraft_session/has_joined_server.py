@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from application.dtos.minecraft_session import ProfileResponse
 from application.services.minecraft_profile import MinecraftProfileService
-from domain.entities.base import UserRelatedHandle, MCServerID
+from domain.entities.base import MCServerID, UserRelatedHandle
 from domain.exceptions.minecraft import InvalidMCServerID
 from domain.interfaces.unit_of_work import UnitOfWork
 
@@ -28,14 +28,16 @@ class HasJoinedServerUseCase:
 
             response = self._mc_profile_service.build_profile_response(
                 mc_profile=mc_profile,
-
                 skin_wardrobe_item=await self._uow.wardrobe.get_by_id_from_user_wardrobe_or_raise(
-                    id=mc_profile.active_skin_id,
-                    user_id=mc_profile.user_id) if mc_profile.active_skin_id is not None else None,
-
+                    id=mc_profile.active_skin_id, user_id=mc_profile.user_id
+                )
+                if mc_profile.active_skin_id is not None
+                else None,
                 cape_wardrobe_item=await self._uow.wardrobe.get_by_id_from_user_wardrobe_or_raise(
-                    id=mc_profile.active_cape_id,
-                    user_id=mc_profile.user_id) if mc_profile.active_cape_id is not None else None,
+                    id=mc_profile.active_cape_id, user_id=mc_profile.user_id
+                )
+                if mc_profile.active_cape_id is not None
+                else None,
             )
 
             return response

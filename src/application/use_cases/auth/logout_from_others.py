@@ -8,6 +8,7 @@ from domain.exceptions.base import DomainError
 from domain.interfaces.services.string_hasher import StringHasher
 from domain.interfaces.unit_of_work import UnitOfWork
 
+
 @dataclass(frozen=True)
 class LogoutFromOthersRequest:
     password: str
@@ -36,7 +37,3 @@ class LogoutFromOthersUseCase:
 
             await self._uow.commit()
             return StatusResponse()
-
-
-
-

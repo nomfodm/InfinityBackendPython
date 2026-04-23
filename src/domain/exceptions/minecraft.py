@@ -15,4 +15,3 @@ class InvalidMCAccessToken(DomainError):
 
 class InvalidMCServerID(DomainError):
     pass
-

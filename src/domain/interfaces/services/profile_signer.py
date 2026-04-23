@@ -7,4 +7,3 @@ class ProfileSigner(Protocol):
 
     def get_public_key(self) -> str:
         pass
-

@@ -17,6 +17,3 @@ class MinecraftSessionRepository(Protocol):
         if mc_session is None:
             raise MinecraftSessionNotFoundError("Игровой сессии для этого пользователя нет.")
         return mc_session
-
-
-

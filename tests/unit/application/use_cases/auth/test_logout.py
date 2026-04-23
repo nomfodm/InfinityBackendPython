@@ -1,13 +1,10 @@
 import uuid
-from unittest.mock import AsyncMock
 
 import pytest
 
 from application.dtos.auth import SessionCredentials
 from application.services.auth import AuthService
 from application.use_cases.auth.logout import LogoutUseCase
-from domain.entities.session import Session
-from domain.entities.user import User
 from domain.interfaces.unit_of_work import UnitOfWork
 
 
@@ -18,16 +15,11 @@ def uc(mock_auth_service: AuthService, mock_uow: UnitOfWork):
 
 @pytest.fixture
 def dto():
-    return SessionCredentials(
-        id=uuid.uuid4(),
-        refresh_token="refresh_token"
-    )
+    return SessionCredentials(id=uuid.uuid4(), refresh_token="refresh_token")
 
 
 @pytest.mark.asyncio
-async def test_logout_success(mock_uow: UnitOfWork,
-                              uc: LogoutUseCase,
-                              dto: SessionCredentials):
+async def test_logout_success(mock_uow: UnitOfWork, uc: LogoutUseCase, dto: SessionCredentials):
     await uc.execute(dto=dto)
 
     mock_uow.commit.assert_called_once()

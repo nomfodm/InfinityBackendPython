@@ -19,7 +19,9 @@ class ActivateUserUseCase:
 
     async def execute(self, *, dto: ActivateUserRequest) -> StatusResponse:
         async with self._uow:
-            code = await self._uow.verification_codes.get_code(email=dto.email, purpose=VerificationCodePurpose.ACTIVATION)
+            code = await self._uow.verification_codes.get_code(
+                email=dto.email, purpose=VerificationCodePurpose.ACTIVATION
+            )
             if code is None or code != dto.verification_code:
                 raise InvalidVerificationCode("Неверный код подтверждения.")
 

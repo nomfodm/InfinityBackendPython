@@ -5,18 +5,18 @@ from uuid import uuid4
 
 import pytest
 
+from application.constants import VERIFICATION_CODE_TTL_SECONDS
 from application.use_cases.user.activate_user import ActivateUserRequest, ActivateUserUseCase
 from application.use_cases.user.change_email import ChangeEmailRequest, ChangeEmailUseCase
-from application.use_cases.user.change_password import ChangePasswordUseCase, ChangePasswordRequest
+from application.use_cases.user.change_password import ChangePasswordRequest, ChangePasswordUseCase
 from application.use_cases.user.change_username import ChangeUsernameRequest, ChangeUsernameUseCase
 from application.use_cases.user.me import MeUseCase
 from application.use_cases.user.minecraft_profile.change_nickname import ChangeNicknameRequest, ChangeNicknameUseCase
-from application.constants import VERIFICATION_CODE_TTL_SECONDS
 from application.use_cases.user.reset_password import ResetPasswordRequest, ResetPasswordUseCase
 from application.use_cases.user.send_verification_code import SendVerificationCodeRequest, SendVerificationCodeUseCase
 from domain.entities.base import ContentLabel, Email, Url, UserRelatedHandle
-from domain.entities.verification_code import VerificationCodePurpose
 from domain.entities.user import BanStatus, User
+from domain.entities.verification_code import VerificationCodePurpose
 from domain.entities.wardrobe import Texture, TextureType, WardrobeItem
 from domain.exceptions.auth import EmailTakenError, InvalidCredentialError, UsernameTakenError
 from domain.exceptions.user import InvalidVerificationCode, NicknameTakenError
@@ -49,7 +49,6 @@ async def test_activate_user_fails_when_code_missing(mock_uow: UnitOfWork):
     mock_uow.verification_codes.get_code = AsyncMock(return_value=None)
     uc = ActivateUserUseCase(uow=mock_uow)
     dto = ActivateUserRequest(email=Email("player@example.com"), verification_code="123456")
-
 
     with pytest.raises(InvalidVerificationCode):
         await uc.execute(dto=dto)
@@ -254,11 +253,13 @@ async def test_reset_password_fails_when_code_missing(mock_uow: UnitOfWork, mock
     uc = ResetPasswordUseCase(uow=mock_uow, hasher=hasher)
 
     with pytest.raises(InvalidVerificationCode):
-        await uc.execute(dto=ResetPasswordRequest(
-            email=Email("player@example.com"),
-            verification_code="123456",
-            new_password="newpass",
-        ))
+        await uc.execute(
+            dto=ResetPasswordRequest(
+                email=Email("player@example.com"),
+                verification_code="123456",
+                new_password="newpass",
+            )
+        )
 
     mock_uow.commit.assert_not_called()
 
@@ -270,11 +271,13 @@ async def test_reset_password_fails_when_code_wrong(mock_uow: UnitOfWork, mocker
     uc = ResetPasswordUseCase(uow=mock_uow, hasher=hasher)
 
     with pytest.raises(InvalidVerificationCode):
-        await uc.execute(dto=ResetPasswordRequest(
-            email=Email("player@example.com"),
-            verification_code="123456",
-            new_password="newpass",
-        ))
+        await uc.execute(
+            dto=ResetPasswordRequest(
+                email=Email("player@example.com"),
+                verification_code="123456",
+                new_password="newpass",
+            )
+        )
 
     mock_uow.commit.assert_not_called()
 
@@ -287,11 +290,13 @@ async def test_reset_password_success_hashes_and_saves(mock_uow: UnitOfWork, fak
     hasher.hash.return_value = "new_hash"
     uc = ResetPasswordUseCase(uow=mock_uow, hasher=hasher)
 
-    result = await uc.execute(dto=ResetPasswordRequest(
-        email=Email("player@example.com"),
-        verification_code="123456",
-        new_password="newpass",
-    ))
+    result = await uc.execute(
+        dto=ResetPasswordRequest(
+            email=Email("player@example.com"),
+            verification_code="123456",
+            new_password="newpass",
+        )
+    )
 
     assert result.ok is True
     assert fake_user.password_hash == "new_hash"
