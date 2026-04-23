@@ -29,6 +29,8 @@ class LoginUseCase:
             if not self._hasher.verify(raw=dto.password, hashed=user.password_hash):
                 raise InvalidCredentialError("Неверные логин или пароль.")
 
+            await self._uow.sessions.delete_invalid_by_user_id(user_id=user.id)
+
             session_tokens = self._auth_service.create_session_and_tokens(user_id=user.id)
 
             await self._uow.sessions.save(session=session_tokens.session)
