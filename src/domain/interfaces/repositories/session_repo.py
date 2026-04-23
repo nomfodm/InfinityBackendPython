@@ -24,5 +24,8 @@ class SessionRepository(Protocol):
     async def delete_others_by_user_id(self, *, user_id: int, exclude_session_id: uuid.UUID) -> None:
         pass
 
+    async def delete_invalid_by_user_id(self, *, user_id: int) -> None:
+        pass
+
 
 

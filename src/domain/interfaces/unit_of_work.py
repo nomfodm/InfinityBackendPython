@@ -1,7 +1,7 @@
 from typing import Protocol
 
 from domain.interfaces.repositories.minecraft_profile_repo import MinecraftProfileRepository
-from domain.interfaces.repositories.minecraft_sessions_repo import MinecraftSessionRepository
+from domain.interfaces.repositories.minecraft_session_repo import MinecraftSessionRepository
 from domain.interfaces.repositories.session_repo import SessionRepository
 from domain.interfaces.repositories.texture_catalog_repo import TextureCatalogRepository
 from domain.interfaces.repositories.texture_repo import TextureRepository
