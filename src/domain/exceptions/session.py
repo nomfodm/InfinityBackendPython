@@ -19,4 +19,7 @@ class SessionExpiredError(DomainError):
 
 class TokenAuthenticityError(DomainError):
     pass
-    
+
+
+class CannotRevokeSessionError(DomainError):
+    pass
