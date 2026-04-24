@@ -15,6 +15,7 @@ class BanStatus:
     is_banned: bool = False
     is_permanent: bool = False
     banned_till: datetime.datetime | None = None
+    admin_user_id: int | None = None
 
 
 @dataclass

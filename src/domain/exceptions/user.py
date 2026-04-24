@@ -7,3 +7,7 @@ class InvalidVerificationCode(DomainError):
 
 class NicknameTakenError(DomainError):
     pass
+
+
+class UserNotFoundError(DomainError):
+    pass

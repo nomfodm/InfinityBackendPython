@@ -1,12 +1,13 @@
+import datetime
 from functools import wraps
 
-from domain.entities.user import User
-from domain.exceptions.auth import UnauthenticatedError, UserBannedError, UserNeedsActivationError
+from domain.entities.user import User, Role
+from domain.exceptions.auth import UnauthenticatedError, UserBannedError, UserNeedsActivationError, AccessDeniedError
 
 
 def require_login(func):
     @wraps(func)
-    def wrapper(self, *args, **kwargs):
+    async def wrapper(self, *args, **kwargs):
         user = kwargs.get("user")
 
         if not isinstance(user, User):
@@ -16,12 +17,34 @@ def require_login(func):
             raise UserNeedsActivationError("Подтвердите почту для активации аккаунта.")
 
         ban_status = user.ban_status
-        if ban_status and ban_status.is_banned:
+        if ban_status.is_banned:
             if ban_status.is_permanent:
                 raise UserBannedError("Пользователь заблокирован бессрочно")
-            if ban_status.banned_till:
+            if ban_status.banned_till and ban_status.banned_till > datetime.datetime.now(tz=datetime.timezone.utc):
                 raise UserBannedError(f"Пользователь временно заблокирован (до {ban_status.banned_till})")
 
-        return func(self, *args, **kwargs)
+        return await func(self, *args, **kwargs)
 
     return wrapper
+
+
+def roles_allowed(*roles: Role):
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(self, *args, **kwargs):
+            user = kwargs.get("user")
+
+            if not isinstance(user, User):
+                raise UnauthenticatedError("Объект пользователя невалиден или отсутствует.")
+
+            required_roles = set(roles)
+            if not user.roles.intersection(required_roles):
+                raise AccessDeniedError(f"Недостаточно прав. Требуется хотя бы одна из этих ролей: {required_roles}")
+
+            return await func(self, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
