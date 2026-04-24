@@ -49,5 +49,3 @@ class BanUserUseCase:
 
             await self._uow.commit()
             return StatusResponse()
-
-

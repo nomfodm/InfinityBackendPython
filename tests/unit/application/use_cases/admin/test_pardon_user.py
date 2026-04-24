@@ -37,9 +37,7 @@ def uc(mock_uow: UnitOfWork) -> PardonUserUseCase:
 
 
 @pytest.mark.asyncio
-async def test_pardon_user_success(
-    mock_uow: UnitOfWork, uc: PardonUserUseCase, admin_user: User, banned_user: User
-):
+async def test_pardon_user_success(mock_uow: UnitOfWork, uc: PardonUserUseCase, admin_user: User, banned_user: User):
     mock_uow.users.get_by_id = AsyncMock(return_value=banned_user)
     dto = PardonUserRequest(user_to_pardon_id=banned_user.id)
 

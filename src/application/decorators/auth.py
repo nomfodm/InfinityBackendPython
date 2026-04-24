@@ -46,5 +46,3 @@ def roles_allowed(*roles: Role):
         return wrapper
 
     return decorator
-
-
