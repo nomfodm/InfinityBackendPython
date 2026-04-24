@@ -29,3 +29,7 @@ class SessionRepository(Protocol):
 
     async def get_all_by_user_id(self, *, user_id: int) -> list[Session]:
         pass
+
+    async def delete_all_by_user_id(self, *, user_id: int) -> None:
+        pass
+

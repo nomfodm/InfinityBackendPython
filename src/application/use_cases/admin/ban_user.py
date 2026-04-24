@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass
 from enum import StrEnum
 
-from application.decorators.auth import require_login, roles_allowed
+from application.decorators.auth import require_login, require_not_banned, roles_allowed
 from application.dtos.common import StatusResponse
 from domain.entities.user import Role, User
 from domain.exceptions.base import ValidationError
@@ -31,6 +31,7 @@ class BanUserUseCase:
         self._uow = uow
 
     @require_login
+    @require_not_banned
     @roles_allowed(Role.ADMIN)
     async def execute(self, *, dto: BanUserRequest, user: User) -> StatusResponse:
         async with self._uow:

@@ -1,4 +1,4 @@
-from application.decorators.auth import require_login
+from application.decorators.auth import require_login, require_not_banned
 from application.dtos.minecraft_session import MinecraftSessionResponse
 from domain.entities.minecraft_session import MinecraftSession
 from domain.entities.user import User
@@ -11,6 +11,7 @@ class CreateMinecraftSessionUseCase:
         self._uow = uow
 
     @require_login
+    @require_not_banned
     async def execute(self, *, user: User) -> MinecraftSessionResponse:
         async with self._uow:
             mc_profile = await self._uow.minecraft_profiles.get_by_user_id_or_raise(user_id=user.id)

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.decorators.auth import require_login
+from application.decorators.auth import require_login, require_not_banned
 from application.dtos.common import StatusResponse
 from domain.entities.base import UserRelatedHandle
 from domain.entities.user import User
@@ -18,6 +18,7 @@ class ChangeUsernameUseCase:
         self._uow = uow
 
     @require_login
+    @require_not_banned
     async def execute(self, *, dto: ChangeUsernameRequest, user: User) -> StatusResponse:
         async with self._uow:
             existing_username = await self._uow.users.get_by_username(username=dto.new_username)

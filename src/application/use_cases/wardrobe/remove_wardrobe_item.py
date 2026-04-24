@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.decorators.auth import require_login
+from application.decorators.auth import require_login, require_not_banned
 from application.dtos.common import StatusResponse
 from domain.entities.user import User
 from domain.interfaces.unit_of_work import UnitOfWork
@@ -16,6 +16,7 @@ class RemoveWardrobeItemUseCase:
         self._uow = uow
 
     @require_login
+    @require_not_banned
     async def execute(self, *, dto: RemoveWardrobeItemRequest, user: User) -> StatusResponse:
         async with self._uow:
             item = await self._uow.wardrobe.get_by_id_from_user_wardrobe_or_raise(id=dto.id, user_id=user.id)

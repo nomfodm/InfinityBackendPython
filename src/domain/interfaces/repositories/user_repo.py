@@ -16,3 +16,6 @@ class UserRepository(Protocol):
 
     async def get_by_id(self, *, id: int) -> User | None:
         pass
+
+    async def get_all(self) -> list[User]:
+        pass

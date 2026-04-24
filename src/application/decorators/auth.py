@@ -16,13 +16,21 @@ def require_login(func):
         if not user.is_active:
             raise UserNeedsActivationError("Подтвердите почту для активации аккаунта.")
 
+        return await func(self, *args, **kwargs)
+
+    return wrapper
+
+
+def require_not_banned(func):
+    @wraps(func)
+    async def wrapper(self, *args, **kwargs):
+        user = kwargs.get("user")
         ban_status = user.ban_status
         if ban_status.is_banned:
             if ban_status.is_permanent:
                 raise UserBannedError("Пользователь заблокирован бессрочно")
             if ban_status.banned_till and ban_status.banned_till > datetime.datetime.now(tz=datetime.UTC):
                 raise UserBannedError(f"Пользователь временно заблокирован (до {ban_status.banned_till})")
-
         return await func(self, *args, **kwargs)
 
     return wrapper

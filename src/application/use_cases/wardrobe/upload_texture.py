@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass
 from datetime import UTC
 
-from application.decorators.auth import require_login
+from application.decorators.auth import require_login, require_not_banned
 from application.dtos.wardrobe import WardrobeItemResponse
 from domain.entities.base import ContentLabel
 from domain.entities.user import User
@@ -28,6 +28,7 @@ class UploadTextureUseCase:
         self._texture_service = texture_service
 
     @require_login
+    @require_not_banned
     async def execute(self, *, dto: UploadTextureRequest, user: User) -> WardrobeItemResponse:
         self._texture_service.validate_texture(file_bytes=dto.file_bytes, texture_type=dto.type)
 

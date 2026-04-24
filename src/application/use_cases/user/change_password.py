@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.decorators.auth import require_login
+from application.decorators.auth import require_login, require_not_banned
 from application.dtos.common import StatusResponse
 from domain.entities.user import User
 from domain.exceptions.auth import InvalidCredentialError
@@ -20,6 +20,7 @@ class ChangePasswordUseCase:
         self._hasher = hasher
 
     @require_login
+    @require_not_banned
     async def execute(self, *, dto: ChangePasswordRequest, user: User) -> StatusResponse:
         if not self._hasher.verify(raw=dto.old_password, hashed=user.password_hash):
             raise InvalidCredentialError("Неверный текущий пароль.")

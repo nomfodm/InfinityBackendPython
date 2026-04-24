@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from application.decorators.auth import require_login
+from application.dtos.user import BanStatusResponse
 from application.dtos.wardrobe import WardrobeItemResponse
 from domain.entities.user import User
 from domain.interfaces.unit_of_work import UnitOfWork
@@ -17,13 +18,6 @@ class MinecraftProfileResponse:
     id: int
     active_skin: WardrobeItemResponse | None = None
     active_cape: WardrobeItemResponse | None = None
-
-
-@dataclass(frozen=True)
-class BanStatusResponse:
-    is_banned: bool
-    is_permanent: bool
-    banned_till: datetime.datetime | None
 
 
 @dataclass(frozen=True)
@@ -75,6 +69,7 @@ class MeUseCase:
                     is_banned=user.ban_status.is_banned,
                     is_permanent=user.ban_status.is_permanent,
                     banned_till=user.ban_status.banned_till,
+                    admin_user_id=user.id,
                 ),
                 is_active=user.is_active,
                 registered_at=user.registered_at,

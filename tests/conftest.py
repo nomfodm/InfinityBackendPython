@@ -27,6 +27,8 @@ def mock_uow(mocker: MockerFixture) -> UnitOfWork:
     uow.textures = mocker.AsyncMock()
     uow.texture_catalog = mocker.AsyncMock()
 
+    uow.login_history = mocker.AsyncMock()
+
     uow.commit = mocker.AsyncMock()
     uow.rollback = mocker.AsyncMock()
 

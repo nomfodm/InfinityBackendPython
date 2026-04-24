@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.decorators.auth import require_login, roles_allowed
+from application.decorators.auth import require_login, require_not_banned, roles_allowed
 from application.dtos.common import StatusResponse
 from domain.entities.user import Role, User
 from domain.exceptions.user import UserNotFoundError
@@ -17,6 +17,7 @@ class PardonUserUseCase:
         self._uow = uow
 
     @require_login
+    @require_not_banned
     @roles_allowed(Role.ADMIN)
     async def execute(self, *, dto: PardonUserRequest, user: User) -> StatusResponse:
         async with self._uow:

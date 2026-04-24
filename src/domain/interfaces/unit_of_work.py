@@ -1,5 +1,6 @@
 from typing import Protocol
 
+from domain.interfaces.repositories.login_history_repo import LoginHistoryRepository
 from domain.interfaces.repositories.minecraft_profile_repo import MinecraftProfileRepository
 from domain.interfaces.repositories.minecraft_session_repo import MinecraftSessionRepository
 from domain.interfaces.repositories.session_repo import SessionRepository
@@ -19,6 +20,7 @@ class UnitOfWork(Protocol):
     textures: TextureRepository
     texture_catalog: TextureCatalogRepository
     sessions: SessionRepository
+    login_history: LoginHistoryRepository
 
     async def __aenter__(self) -> "UnitOfWork":
         return self

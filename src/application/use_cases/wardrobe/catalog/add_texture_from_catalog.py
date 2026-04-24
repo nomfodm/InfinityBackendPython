@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass
 from datetime import UTC
 
-from application.decorators.auth import require_login
+from application.decorators.auth import require_login, require_not_banned
 from application.dtos.wardrobe import WardrobeItemResponse
 from domain.entities.user import User
 from domain.entities.wardrobe import WardrobeItem
@@ -19,6 +19,7 @@ class AddTextureFromCatalogUseCase:
         self._uow = uow
 
     @require_login
+    @require_not_banned
     async def execute(self, *, dto: AddTextureFromCatalogRequest, user: User) -> WardrobeItemResponse:
         async with self._uow:
             catalog_item = await self._uow.texture_catalog.get_by_id_or_raise(id=dto.id)

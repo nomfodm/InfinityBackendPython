@@ -4,7 +4,7 @@ import pytest
 
 from application.decorators.auth import require_login
 from domain.entities.user import BanStatus, User
-from domain.exceptions.auth import UnauthenticatedError, UserBannedError, UserNeedsActivationError
+from domain.exceptions.auth import UnauthenticatedError, UserNeedsActivationError
 
 
 class _UC:
@@ -15,6 +15,13 @@ class _UC:
 
 @pytest.mark.asyncio
 async def test_require_login_passes_for_active_user(active_user: User):
+    result = await _UC().execute(user=active_user)
+    assert result == "ok"
+
+
+@pytest.mark.asyncio
+async def test_require_login_passes_for_banned_user(active_user: User):
+    active_user.ban_status = BanStatus(is_banned=True, is_permanent=True)
     result = await _UC().execute(user=active_user)
     assert result == "ok"
 
@@ -35,32 +42,3 @@ async def test_require_login_raises_when_user_is_none():
 async def test_require_login_raises_when_inactive(fake_user: User):
     with pytest.raises(UserNeedsActivationError):
         await _UC().execute(user=fake_user)
-
-
-@pytest.mark.asyncio
-async def test_require_login_raises_when_permanently_banned(active_user: User):
-    active_user.ban_status = BanStatus(is_banned=True, is_permanent=True)
-    with pytest.raises(UserBannedError):
-        await _UC().execute(user=active_user)
-
-
-@pytest.mark.asyncio
-async def test_require_login_raises_when_temporarily_banned(active_user: User):
-    active_user.ban_status = BanStatus(
-        is_banned=True,
-        is_permanent=False,
-        banned_till=datetime.now(UTC) + timedelta(days=1),
-    )
-    with pytest.raises(UserBannedError):
-        await _UC().execute(user=active_user)
-
-
-@pytest.mark.asyncio
-async def test_require_login_passes_when_temporary_ban_expired(active_user: User):
-    active_user.ban_status = BanStatus(
-        is_banned=True,
-        is_permanent=False,
-        banned_till=datetime.now(UTC) - timedelta(seconds=1),
-    )
-    result = await _UC().execute(user=active_user)
-    assert result == "ok"
