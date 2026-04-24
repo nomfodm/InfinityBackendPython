@@ -9,7 +9,7 @@ from domain.interfaces.unit_of_work import UnitOfWork
 
 @dataclass(frozen=True)
 class PardonUserRequest:
-    user_to_pardon_id: int
+    user_id: int
 
 
 class PardonUserUseCase:
@@ -20,7 +20,7 @@ class PardonUserUseCase:
     @roles_allowed(Role.ADMIN)
     async def execute(self, *, dto: PardonUserRequest, user: User) -> StatusResponse:
         async with self._uow:
-            user_to_pardon = await self._uow.users.get_by_id(id=dto.user_to_pardon_id)
+            user_to_pardon = await self._uow.users.get_by_id(id=dto.user_id)
             if user_to_pardon is None:
                 raise UserNotFoundError("Пользователь не найден.")
 

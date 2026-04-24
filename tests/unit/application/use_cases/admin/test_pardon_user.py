@@ -39,7 +39,7 @@ def uc(mock_uow: UnitOfWork) -> PardonUserUseCase:
 @pytest.mark.asyncio
 async def test_pardon_user_success(mock_uow: UnitOfWork, uc: PardonUserUseCase, admin_user: User, banned_user: User):
     mock_uow.users.get_by_id = AsyncMock(return_value=banned_user)
-    dto = PardonUserRequest(user_to_pardon_id=banned_user.id)
+    dto = PardonUserRequest(user_id=banned_user.id)
 
     result = await uc.execute(dto=dto, user=admin_user)
 
@@ -55,7 +55,7 @@ async def test_pardon_user_success(mock_uow: UnitOfWork, uc: PardonUserUseCase, 
 @pytest.mark.asyncio
 async def test_pardon_user_raises_when_user_not_found(mock_uow: UnitOfWork, uc: PardonUserUseCase, admin_user: User):
     mock_uow.users.get_by_id = AsyncMock(return_value=None)
-    dto = PardonUserRequest(user_to_pardon_id=999)
+    dto = PardonUserRequest(user_id=999)
 
     with pytest.raises(UserNotFoundError):
         await uc.execute(dto=dto, user=admin_user)
@@ -65,7 +65,7 @@ async def test_pardon_user_raises_when_user_not_found(mock_uow: UnitOfWork, uc: 
 
 @pytest.mark.asyncio
 async def test_pardon_user_raises_for_non_admin(mock_uow: UnitOfWork, uc: PardonUserUseCase, active_user: User):
-    dto = PardonUserRequest(user_to_pardon_id=2)
+    dto = PardonUserRequest(user_id=2)
 
     with pytest.raises(AccessDeniedError):
         await uc.execute(dto=dto, user=active_user)

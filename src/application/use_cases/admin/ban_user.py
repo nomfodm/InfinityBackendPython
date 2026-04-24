@@ -18,7 +18,7 @@ class BanType(StrEnum):
 @dataclass(frozen=True)
 class BanUserRequest:
     ban_type: BanType
-    user_to_ban_id: int
+    user_id: int
     banned_till: datetime.datetime | None = None
 
     def __post_init__(self) -> None:
@@ -34,7 +34,7 @@ class BanUserUseCase:
     @roles_allowed(Role.ADMIN)
     async def execute(self, *, dto: BanUserRequest, user: User) -> StatusResponse:
         async with self._uow:
-            user_to_ban = await self._uow.users.get_by_id(id=dto.user_to_ban_id)
+            user_to_ban = await self._uow.users.get_by_id(id=dto.user_id)
             if user_to_ban is None:
                 raise UserNotFoundError("Пользователь не найден.")
 

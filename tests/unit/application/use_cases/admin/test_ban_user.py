@@ -40,7 +40,7 @@ async def test_ban_user_permanent_success(
     mock_uow: UnitOfWork, uc: BanUserUseCase, admin_user: User, target_user: User
 ):
     mock_uow.users.get_by_id = AsyncMock(return_value=target_user)
-    dto = BanUserRequest(ban_type=BanType.PERMANENT, user_to_ban_id=target_user.id)
+    dto = BanUserRequest(ban_type=BanType.PERMANENT, user_id=target_user.id)
 
     result = await uc.execute(dto=dto, user=admin_user)
 
@@ -58,7 +58,7 @@ async def test_ban_user_temporary_success(
 ):
     banned_till = datetime.now(UTC) + timedelta(days=7)
     mock_uow.users.get_by_id = AsyncMock(return_value=target_user)
-    dto = BanUserRequest(ban_type=BanType.TEMPORARY, user_to_ban_id=target_user.id, banned_till=banned_till)
+    dto = BanUserRequest(ban_type=BanType.TEMPORARY, user_id=target_user.id, banned_till=banned_till)
 
     result = await uc.execute(dto=dto, user=admin_user)
 
@@ -72,13 +72,13 @@ async def test_ban_user_temporary_success(
 
 def test_ban_user_temporary_without_banned_till_raises_validation_error():
     with pytest.raises(ValidationError):
-        BanUserRequest(ban_type=BanType.TEMPORARY, user_to_ban_id=1)
+        BanUserRequest(ban_type=BanType.TEMPORARY, user_id=1)
 
 
 @pytest.mark.asyncio
 async def test_ban_user_raises_when_user_not_found(mock_uow: UnitOfWork, uc: BanUserUseCase, admin_user: User):
     mock_uow.users.get_by_id = AsyncMock(return_value=None)
-    dto = BanUserRequest(ban_type=BanType.PERMANENT, user_to_ban_id=999)
+    dto = BanUserRequest(ban_type=BanType.PERMANENT, user_id=999)
 
     with pytest.raises(UserNotFoundError):
         await uc.execute(dto=dto, user=admin_user)
@@ -88,7 +88,7 @@ async def test_ban_user_raises_when_user_not_found(mock_uow: UnitOfWork, uc: Ban
 
 @pytest.mark.asyncio
 async def test_ban_user_raises_for_non_admin(mock_uow: UnitOfWork, uc: BanUserUseCase, active_user: User):
-    dto = BanUserRequest(ban_type=BanType.PERMANENT, user_to_ban_id=2)
+    dto = BanUserRequest(ban_type=BanType.PERMANENT, user_id=2)
 
     with pytest.raises(AccessDeniedError):
         await uc.execute(dto=dto, user=active_user)
