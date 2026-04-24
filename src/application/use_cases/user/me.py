@@ -70,7 +70,7 @@ class MeUseCase:
                 id=user.id,
                 email=user.email.value,
                 username=user.username.value,
-                roles=[role.value for role in user.roles],
+                roles=list(user.roles),
                 ban_status=BanStatusResponse(
                     is_banned=user.ban_status.is_banned,
                     is_permanent=user.ban_status.is_permanent,
