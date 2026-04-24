@@ -1,3 +1,4 @@
+import uuid
 from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock
 
@@ -9,8 +10,6 @@ from application.use_cases.auth.get_login_history import GetLoginHistoryUseCase
 from domain.entities.login_history import LoginHistoryEntry
 from domain.entities.session import Session
 from domain.interfaces.unit_of_work import UnitOfWork
-
-import uuid
 
 
 @pytest.fixture
@@ -43,7 +42,9 @@ def uc(mock_uow: UnitOfWork, mock_auth_service: AuthService) -> GetLoginHistoryU
 @pytest.fixture
 def fake_entries() -> list[LoginHistoryEntry]:
     return [
-        LoginHistoryEntry(id=1, user_id=1, timestamp=datetime.now(UTC), ip_address="127.0.0.1", user_agent="launcher/1.0"),
+        LoginHistoryEntry(
+            id=1, user_id=1, timestamp=datetime.now(UTC), ip_address="127.0.0.1", user_agent="launcher/1.0"
+        ),
         LoginHistoryEntry(id=2, user_id=1, timestamp=datetime.now(UTC), ip_address="10.0.0.1", user_agent=None),
     ]
 

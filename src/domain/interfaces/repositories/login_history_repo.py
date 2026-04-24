@@ -9,4 +9,3 @@ class LoginHistoryRepository(Protocol):
 
     async def get_by_user_id(self, *, user_id: int) -> list[LoginHistoryEntry]:
         pass
-

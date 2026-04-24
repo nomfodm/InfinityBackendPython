@@ -46,4 +46,3 @@ class GetUsersUseCase:
         async with self._uow:
             users = await self._uow.users.get_all()
             return [AdminUserResponse.from_domain(u) for u in users]
-

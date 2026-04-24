@@ -32,4 +32,3 @@ class SessionRepository(Protocol):
 
     async def delete_all_by_user_id(self, *, user_id: int) -> None:
         pass
-

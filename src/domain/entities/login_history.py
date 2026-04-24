@@ -9,6 +9,3 @@ class LoginHistoryEntry:
     ip_address: str | None = None
     user_agent: str | None = None
     id: int | None = None
-
-
-
