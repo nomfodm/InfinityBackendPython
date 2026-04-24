@@ -1,8 +1,8 @@
 import datetime
 from functools import wraps
 
-from domain.entities.user import User, Role
-from domain.exceptions.auth import UnauthenticatedError, UserBannedError, UserNeedsActivationError, AccessDeniedError
+from domain.entities.user import Role, User
+from domain.exceptions.auth import AccessDeniedError, UnauthenticatedError, UserBannedError, UserNeedsActivationError
 
 
 def require_login(func):
@@ -20,7 +20,7 @@ def require_login(func):
         if ban_status.is_banned:
             if ban_status.is_permanent:
                 raise UserBannedError("Пользователь заблокирован бессрочно")
-            if ban_status.banned_till and ban_status.banned_till > datetime.datetime.now(tz=datetime.timezone.utc):
+            if ban_status.banned_till and ban_status.banned_till > datetime.datetime.now(tz=datetime.UTC):
                 raise UserBannedError(f"Пользователь временно заблокирован (до {ban_status.banned_till})")
 
         return await func(self, *args, **kwargs)
