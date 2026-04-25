@@ -6,7 +6,6 @@ from domain.entities.base import Email, UserRelatedHandle
 
 
 class Role(enum.StrEnum):
-    PLAYER = "player"
     ADMIN = "admin"
 
 
@@ -26,7 +25,7 @@ class User:
 
     registered_at: datetime.datetime
 
-    roles: set[Role] = field(default_factory=lambda: {Role.PLAYER})
+    roles: set[Role] = field(default_factory=set)
 
     ban_status: BanStatus = field(default_factory=lambda: BanStatus())
     is_active: bool = False
