@@ -58,14 +58,14 @@ async def test_get_login_history_success(
     fake_entries: list[LoginHistoryEntry],
 ):
     mock_uow.sessions.get_by_id_or_raise = AsyncMock(return_value=session)
-    mock_uow.login_history.get_by_user_id = AsyncMock(return_value=fake_entries)
+    mock_uow.login_histories.get_by_user_id = AsyncMock(return_value=fake_entries)
 
     result = await uc.execute(dto=dto)
 
     assert len(result) == 2
     assert result[0].ip_address == "127.0.0.1"
     assert result[1].user_agent is None
-    mock_uow.login_history.get_by_user_id.assert_awaited_once_with(user_id=session.user_id)
+    mock_uow.login_histories.get_by_user_id.assert_awaited_once_with(user_id=session.user_id)
 
 
 @pytest.mark.asyncio
@@ -76,7 +76,7 @@ async def test_get_login_history_returns_empty_list(
     dto: SessionCredentials,
 ):
     mock_uow.sessions.get_by_id_or_raise = AsyncMock(return_value=session)
-    mock_uow.login_history.get_by_user_id = AsyncMock(return_value=[])
+    mock_uow.login_histories.get_by_user_id = AsyncMock(return_value=[])
 
     result = await uc.execute(dto=dto)
 
@@ -92,10 +92,10 @@ async def test_get_login_history_verifies_session(
     dto: SessionCredentials,
 ):
     mock_uow.sessions.get_by_id_or_raise = AsyncMock(return_value=session)
-    mock_uow.login_history.get_by_user_id = AsyncMock(return_value=[])
+    mock_uow.login_histories.get_by_user_id = AsyncMock(return_value=[])
     mock_auth_service.verify_session.side_effect = Exception("invalid session")
 
     with pytest.raises(Exception, match="invalid session"):
         await uc.execute(dto=dto)
 
-    mock_uow.login_history.get_by_user_id.assert_not_called()
+    mock_uow.login_histories.get_by_user_id.assert_not_called()

@@ -77,3 +77,17 @@ class MCServerID(IdentName):
     def _validate(self):
         if len(self.value) not in [32, 33]:
             raise ValidationError("Неверная длина serverID (32-33).")
+
+
+@dataclass(frozen=True)
+class SemVer(IdentName):
+    def _validate(self) -> None:
+        parts = self.value.split(".")
+        if len(parts) != 3 or not all(p.isdigit() for p in parts):
+            raise ValidationError(f"Некорректная версия: {self.value!r}")
+
+    def _as_tuple(self) -> tuple[int, ...]:
+        return tuple(int(p) for p in self.value.split("."))
+
+    def __gt__(self, other: "SemVer") -> bool:
+        return self._as_tuple() > other._as_tuple()

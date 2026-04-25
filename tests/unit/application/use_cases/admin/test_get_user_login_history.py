@@ -41,14 +41,14 @@ async def test_get_user_login_history_success(
 ):
     entries = [LoginHistoryEntry(id=1, user_id=2, timestamp=datetime.now(UTC), ip_address="1.2.3.4")]
     mock_uow.users.get_by_id = AsyncMock(return_value=target_user)
-    mock_uow.login_history.get_by_user_id = AsyncMock(return_value=entries)
+    mock_uow.login_histories.get_by_user_id = AsyncMock(return_value=entries)
     dto = GetUserLoginHistoryRequest(user_id=2)
 
     result = await uc.execute(dto=dto, user=admin_user)
 
     assert len(result) == 1
     assert result[0].ip_address == "1.2.3.4"
-    mock_uow.login_history.get_by_user_id.assert_awaited_once_with(user_id=2)
+    mock_uow.login_histories.get_by_user_id.assert_awaited_once_with(user_id=2)
 
 
 @pytest.mark.asyncio
@@ -61,7 +61,7 @@ async def test_get_user_login_history_raises_when_user_not_found(
     with pytest.raises(UserNotFoundError):
         await uc.execute(dto=dto, user=admin_user)
 
-    mock_uow.login_history.get_by_user_id.assert_not_called()
+    mock_uow.login_histories.get_by_user_id.assert_not_called()
 
 
 @pytest.mark.asyncio

@@ -25,6 +25,6 @@ class GetUserLoginHistoryUseCase:
             if existing_user is None:
                 raise UserNotFoundError("Пользователь не найден.")
 
-            login_history = await self._uow.login_history.get_by_user_id(user_id=dto.user_id)
+            login_history = await self._uow.login_histories.get_by_user_id(user_id=dto.user_id)
 
             return [LoginHistoryEntryResponse.from_domain(entry) for entry in login_history]

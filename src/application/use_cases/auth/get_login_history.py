@@ -14,6 +14,6 @@ class GetLoginHistoryUseCase:
             session = await self._uow.sessions.get_by_id_or_raise(uuid=dto.id)
             self._auth_service.verify_session(refresh_token=dto.refresh_token, session=session)
 
-            login_history = await self._uow.login_history.get_by_user_id(user_id=session.user_id)
+            login_history = await self._uow.login_histories.get_by_user_id(user_id=session.user_id)
 
             return [LoginHistoryEntryResponse.from_domain(entry) for entry in login_history]
