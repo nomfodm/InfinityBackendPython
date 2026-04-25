@@ -38,7 +38,7 @@ class UploadTextureUseCase:
             texture = await self._uow.textures.get_texture_by_hash(hash_sha256=texture_hash)
 
             if texture is None:
-                url = self._file_storage.upload_file(
+                url = await self._file_storage.upload_file(
                     file_bytes=dto.file_bytes,
                     content_type="image/png",
                     destination_path=get_texture_path(texture_hash, dto.type),
@@ -48,7 +48,7 @@ class UploadTextureUseCase:
 
                 if dto.type == TextureType.SKIN:
                     head_3d = self._texture_service.generate_3d_head_from_skin(skin_bytes=dto.file_bytes)
-                    self._file_storage.upload_file(
+                    await self._file_storage.upload_file(
                         file_bytes=head_3d,
                         destination_path=get_avatar_path(file_hash=texture_hash),
                         content_type="image/png",
