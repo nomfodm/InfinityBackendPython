@@ -12,7 +12,7 @@ class _AdminOnlyUC:
 
 
 class _MultiRoleUC:
-    @roles_allowed(Role.ADMIN, Role.PLAYER)
+    @roles_allowed(Role.ADMIN)
     async def execute(self, *, user: User):
         return "ok"
 
@@ -44,5 +44,6 @@ async def test_roles_allowed_raises_when_user_is_none():
 
 @pytest.mark.asyncio
 async def test_roles_allowed_passes_when_user_has_one_of_many_roles(active_user: User):
+    active_user.roles = {Role.ADMIN}
     result = await _MultiRoleUC().execute(user=active_user)
     assert result == "ok"

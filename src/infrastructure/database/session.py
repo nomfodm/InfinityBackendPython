@@ -1,12 +1,10 @@
-from sqlmodel import Session, create_engine
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-sqlite_file_name = "database.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+from infrastructure.config import settings
 
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, connect_args=connect_args)
+engine = create_async_engine(str(settings.database.url), echo=False)
 
-
-def get_session():
-    with Session(engine) as session:
-        yield session
+AsyncSessionLocal = async_sessionmaker(
+    engine,
+    expire_on_commit=False,
+)

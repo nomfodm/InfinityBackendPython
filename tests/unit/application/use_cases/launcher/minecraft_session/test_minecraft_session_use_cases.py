@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import pytest
 
+from application.constants import MC_SESSION_TTL_SECONDS
 from application.dtos.minecraft_session import ProfileResponse
 from application.use_cases.launcher.minecraft_session.create_minecraft_session import CreateMinecraftSessionUseCase
 from application.use_cases.launcher.minecraft_session.has_joined_server import HasJoinedRequest, HasJoinedServerUseCase
@@ -121,7 +122,7 @@ async def test_join_server_success(mock_uow: UnitOfWork):
 
     assert result.ok is True
     assert session.server_id == server_id
-    mock_uow.minecraft_sessions.save.assert_awaited_once_with(mc_session=session)
+    mock_uow.minecraft_sessions.save.assert_awaited_once_with(mc_session=session, ttl=MC_SESSION_TTL_SECONDS)
     mock_uow.commit.assert_awaited_once()
 
 

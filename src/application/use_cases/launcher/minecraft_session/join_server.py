@@ -1,6 +1,7 @@
 import uuid
 from dataclasses import dataclass
 
+from application.constants import MC_SESSION_TTL_SECONDS
 from application.dtos.common import StatusResponse
 from domain.entities.base import MCAccessToken, MCServerID
 from domain.exceptions.minecraft import InvalidMCAccessToken
@@ -29,7 +30,7 @@ class JoinServerUseCase:
 
             mc_session.server_id = dto.server_id
 
-            await self._uow.minecraft_sessions.save(mc_session=mc_session)
+            await self._uow.minecraft_sessions.save(mc_session=mc_session, ttl=MC_SESSION_TTL_SECONDS)
 
             await self._uow.commit()
             return StatusResponse()

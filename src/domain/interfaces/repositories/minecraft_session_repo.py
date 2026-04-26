@@ -6,8 +6,7 @@ from domain.exceptions.minecraft import MinecraftSessionNotFoundError
 
 
 class MinecraftSessionRepository(Protocol):
-    async def save(self, *, mc_session: MinecraftSession) -> MinecraftSession:
-        pass
+    async def save(self, *, mc_session: MinecraftSession, ttl: int) -> MinecraftSession: ...
 
     async def get_by_profile_uuid(self, *, profile_uuid: UUID) -> MinecraftSession | None:
         pass

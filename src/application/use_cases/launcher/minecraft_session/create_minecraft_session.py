@@ -1,3 +1,4 @@
+from application.constants import MC_SESSION_TTL_SECONDS
 from application.decorators.auth import require_login, require_not_banned
 from application.dtos.minecraft_session import MinecraftSessionResponse
 from domain.entities.minecraft_session import MinecraftSession
@@ -22,7 +23,8 @@ class CreateMinecraftSessionUseCase:
                     profile_uuid=mc_profile.uuid,
                     nickname=mc_profile.nickname,
                     access_token=generate_token_32_length(),
-                )
+                ),
+                ttl=MC_SESSION_TTL_SECONDS,
             )
             await self._uow.commit()
 
