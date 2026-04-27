@@ -27,6 +27,12 @@ class SqlTextureCatalogRepository(TextureCatalogRepository):
             raise TextureCatalogItemNotFoundError("Такой текстуры нет в каталоге.")
         return item
 
+    async def get_all(self) -> list[TextureCatalogItem]:
+        result = await self._session.execute(
+            select(TextureCatalogItemModel).options(selectinload(TextureCatalogItemModel.texture))
+        )
+        return [model.to_domain() for model in result.scalars().all()]
+
     async def save(self, item: TextureCatalogItem) -> TextureCatalogItem:
         merged = await self._session.merge(TextureCatalogItemModel.from_domain(item))
         await self._session.flush()

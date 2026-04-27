@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+from application.use_cases.wardrobe.catalog.get_texture_catalog import GetTextureCatalogUseCase
 from application.use_cases.wardrobe.catalog.add_texture_from_catalog import (
     AddTextureFromCatalogRequest,
     AddTextureFromCatalogUseCase,
@@ -58,6 +59,30 @@ def _catalog_item(author_id: int = 1):
         author_id=author_id,
         published_at=datetime.now(UTC),
     )
+
+
+@pytest.mark.asyncio
+async def test_get_texture_catalog_returns_empty_list(mock_uow: UnitOfWork):
+    mock_uow.texture_catalog.get_all = AsyncMock(return_value=[])
+    uc = GetTextureCatalogUseCase(uow=mock_uow)
+
+    result = await uc.execute()
+
+    assert result == []
+    mock_uow.commit.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_get_texture_catalog_returns_mapped_items(mock_uow: UnitOfWork):
+    mock_uow.texture_catalog.get_all = AsyncMock(return_value=[_catalog_item(), _catalog_item(author_id=2)])
+    uc = GetTextureCatalogUseCase(uow=mock_uow)
+
+    result = await uc.execute()
+
+    assert len(result) == 2
+    assert result[0].author_id == 1
+    assert result[1].author_id == 2
+    mock_uow.commit.assert_not_called()
 
 
 @pytest.mark.asyncio

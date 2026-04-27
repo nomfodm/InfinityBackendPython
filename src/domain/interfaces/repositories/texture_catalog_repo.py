@@ -14,6 +14,9 @@ class TextureCatalogRepository(Protocol):
             raise TextureCatalogItemNotFoundError("Такой текстуры нет в каталоге.")
         return texture_cat_item
 
+    async def get_all(self) -> list[TextureCatalogItem]:
+        pass
+
     async def save(self, *, item: TextureCatalogItem) -> TextureCatalogItem:
         pass
 
