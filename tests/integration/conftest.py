@@ -2,9 +2,11 @@ import asyncio
 from datetime import UTC, datetime
 
 import pytest
+import redis.asyncio as aioredis
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 from testcontainers.postgres import PostgresContainer
+from testcontainers.redis import RedisContainer
 
 from domain.entities.base import Email, UserRelatedHandle
 from domain.entities.user import User
@@ -64,3 +66,21 @@ async def saved_user(db_session) -> User:
             registered_at=datetime.now(UTC),
         )
     )
+
+
+@pytest.fixture(scope="session")
+def redis_container():
+    with RedisContainer("redis:7-alpine") as r:
+        yield r
+
+
+@pytest.fixture
+async def redis_client(redis_container):
+    client = aioredis.Redis(
+        host=redis_container.get_container_host_ip(),
+        port=int(redis_container.get_exposed_port(6379)),
+        decode_responses=True,
+    )
+    yield client
+    await client.flushdb()
+    await client.aclose()
