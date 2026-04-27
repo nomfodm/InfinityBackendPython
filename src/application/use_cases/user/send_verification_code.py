@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from datetime import UTC, timedelta
 
 from application.constants import VERIFICATION_CODE_TTL_SECONDS
-from domain.entities.base import Email
+from application.decorators.auth import require_not_banned
+from domain.entities.user import User
 from domain.entities.verification_code import VerificationCodePurpose
 from domain.interfaces.services.code_generator import CodeGenerator
 from domain.interfaces.services.email_service import EmailService
@@ -12,7 +13,6 @@ from domain.interfaces.unit_of_work import UnitOfWork
 
 @dataclass(frozen=True)
 class SendVerificationCodeRequest:
-    email: Email
     purpose: VerificationCodePurpose
 
 
@@ -28,18 +28,19 @@ class SendVerificationCodeUseCase:
         self._email_service = email_service
         self._code_generator = code_generator
 
-    async def execute(self, *, dto: SendVerificationCodeRequest) -> VerificationCodeResponse:
+    @require_not_banned
+    async def execute(self, *, dto: SendVerificationCodeRequest, user: User) -> VerificationCodeResponse:
         verification_code = self._code_generator.generate()
 
         async with self._uow:
             await self._uow.verification_codes.save_code(
-                email=dto.email, purpose=dto.purpose, code=verification_code, ttl=VERIFICATION_CODE_TTL_SECONDS
+                email=user.email, purpose=dto.purpose, code=verification_code, ttl=VERIFICATION_CODE_TTL_SECONDS
             )
 
             await self._uow.commit()
 
-        await self._email_service.send_verification_code(email=dto.email, code=verification_code)
+        await self._email_service.send_verification_code(email=user.email, code=verification_code)
         return VerificationCodeResponse(
-            email=dto.email.value,
+            email=user.email.value,
             expires_at=datetime.datetime.now(UTC) + timedelta(seconds=VERIFICATION_CODE_TTL_SECONDS),
         )

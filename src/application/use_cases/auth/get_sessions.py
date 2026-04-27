@@ -14,6 +14,7 @@ class SessionResponse:
     user_agent: str | None = None
     ip_address: str | None = None
     last_used_at: datetime.datetime | None = None
+    is_revoked: bool = False
 
     is_current: bool = False
     id: uuid.UUID | None = None
@@ -27,6 +28,7 @@ class SessionResponse:
             last_used_at=session.last_used_at,
             id=session.id,
             is_current=is_current,
+            is_revoked=session.is_revoked,
         )
 
 

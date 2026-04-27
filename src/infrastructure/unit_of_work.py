@@ -11,6 +11,7 @@ from domain.interfaces.repositories.texture_repo import TextureRepository
 from domain.interfaces.repositories.user_repo import UserRepository
 from domain.interfaces.repositories.verification_code_repo import VerificationCodeRepository
 from domain.interfaces.repositories.wardrobe_item_repo import WardrobeItemRepository
+from domain.interfaces.unit_of_work import UnitOfWork
 from infrastructure.redis.minecraft_session_repo import RedisMinecraftSessionRepository
 from infrastructure.redis.verification_code_repo import RedisVerificationCodeRepository
 from infrastructure.repositories.launcher_release_repo import SqlLauncherReleaseRepository
@@ -23,7 +24,7 @@ from infrastructure.repositories.user_repo import SqlUserRepository
 from infrastructure.repositories.wardrobe_item_repo import SqlWardrobeItemRepository
 
 
-class SqlAlchemyUnitOfWork:
+class SqlAlchemyUnitOfWork(UnitOfWork):
     def __init__(self, *, session_factory: async_sessionmaker[AsyncSession], redis: Redis) -> None:
         self._session_factory = session_factory
         self._redis = redis

@@ -25,6 +25,10 @@ def require_not_banned(func):
     @wraps(func)
     async def wrapper(self, *args, **kwargs):
         user = kwargs.get("user")
+
+        if not isinstance(user, User):
+            raise UnauthenticatedError("Объект пользователя невалиден или отсутствует.")
+
         ban_status = user.ban_status
         if ban_status.is_banned:
             if ban_status.is_permanent:

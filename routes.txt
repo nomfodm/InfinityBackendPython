@@ -1,0 +1,53 @@
+/v1
+                    AUTH
+POST    /auth/login             Login_UseCase
+POST    /auth/signup            RegisterUserAndLogin_UseCase
+POST    /auth/logout            Logout_UseCase
+POST    /auth/logout/others     LogoutFromOthers_UseCase
+GET     /auth/sessions          GetSessions_UseCase
+POST    /auth/sessions/refresh  RefreshSession_UseCase
+DELETE  /auth/sessions/<id>     RevokeSession_UseCase
+POST    /auth/password/reset    ResetPassword_UseCase
+
+                    USER
+GET     /user/me                    Me_UseCase
+POST    /user/activate              ActivateUser_UseCase
+PATCH   /user/me/email              ChangeEmail_UseCase
+PATCH   /user/me/password           ChangePassword_UseCase
+GET     /user/me/login-history      GetLoginHistory_UseCase
+PATCH   /user/me/username           ChangeUsername_UseCase
+POST    /user/me/verification-code  SendVerificationCode_UseCase
+PATCH   /user/me/nickname           ChangeNickname_UseCase
+
+                    WARDROBE
+PATCH   /wardrobe/cosmetics                                 ChangePlayerCosmetics_UseCase
+POST    /wardrobe/items                                     UploadTexture_UseCase
+PATCH   /wardrobe/items/<id>                                EditWardrobeItem_UseCase
+DELETE  /wardrobe/items/<id>                                RemoveWardrobeItem_UseCase
+POST    /wardrobe/items/from-catalog/{catalog_item_id}      AddTextureFromCatalog_UseCase
+GET     /wardrobe/catalog                                   GetTextureCatalog
+POST    /wardrobe/catalog/items                             PublishTexture_UseCase
+PATCH   /wardrobe/catalog/<id>                              EditTextureCatalogItem_UseCase
+DELETE  /wardrobe/catalog/<id>                              UnpublishTexture_UseCase
+
+                    LAUNCHER
+GET     /launcher/update?platform=win&version=1.0.0                                         CheckUpdate_UseCase
+POST    /launcher/releases                                                                  PublishRelease_UseCase
+POST    /launcher/releases/<id>/assets                                                      AddReleaseAsset_UseCase
+POST    /launcher/sessions                                                                  CreateMinecraftSession_UseCase
+GET     /launcher/sessions/minecraft/has-joined?username=nomfodm&server_id=fsdafn...fdsf    HasJoinedServer_UseCase
+POST    /launcher/sessions/minecraft/join                                                   JoinServer_UseCase
+GET     /launcher/sessions/minecraft/profile/<uuid>                                         Profile_UseCase
+POST    /launcher/auth/login    Login_UseCase
+POST    /launcher/auth/logout   Logout_UseCase
+POST    /launcher/auth/logout/others     LogoutFromOthers_UseCase
+POST    /launcher/auth/refresh     RefreshSession_UseCase
+
+                    ADMIN
+POST    /admin/users/<id>/ban               BanUser_UseCase
+POST    /admin/users/<id>/force-logout      ForceLogout_UseCase
+GET     /admin/users/<id>/login-history     GetUserLoginHistory_UseCase
+GET     /admin/users                        GetUsers_UseCase
+POST    /admin/users/<id>/pardon            PardonUser_UseCase
+
+

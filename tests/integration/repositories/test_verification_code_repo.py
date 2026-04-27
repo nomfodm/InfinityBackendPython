@@ -1,5 +1,3 @@
-import pytest
-
 from domain.entities.base import Email
 from domain.entities.verification_code import VerificationCodePurpose
 from infrastructure.redis.verification_code_repo import RedisVerificationCodeRepository

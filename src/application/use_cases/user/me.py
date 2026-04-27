@@ -11,7 +11,6 @@ from domain.interfaces.unit_of_work import UnitOfWork
 
 @dataclass(frozen=True)
 class MinecraftProfileResponse:
-    user_id: int
     uuid: UUID
     nickname: str
     wardrobe: list[WardrobeItemResponse]
@@ -69,13 +68,12 @@ class MeUseCase:
                     is_banned=user.ban_status.is_banned,
                     is_permanent=user.ban_status.is_permanent,
                     banned_till=user.ban_status.banned_till,
-                    admin_user_id=user.id,
+                    admin_user_id=user.ban_status.admin_user_id,
                 ),
                 is_active=user.is_active,
                 registered_at=user.registered_at,
                 minecraft_profile=MinecraftProfileResponse(
                     id=mc_profile.id,
-                    user_id=mc_profile.user_id,
                     uuid=mc_profile.uuid,
                     nickname=mc_profile.nickname.value,
                     wardrobe=[WardrobeItemResponse.from_domain(item) for item in wardrobe],

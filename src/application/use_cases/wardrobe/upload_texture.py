@@ -6,7 +6,7 @@ from application.decorators.auth import require_login, require_not_banned
 from application.dtos.wardrobe import WardrobeItemResponse
 from domain.entities.base import ContentLabel
 from domain.entities.user import User
-from domain.entities.wardrobe import Texture, TextureType, WardrobeItem
+from domain.entities.wardrobe import SkinModel, Texture, TextureType, WardrobeItem
 from domain.interfaces.services.file_storage import FileStorage
 from domain.interfaces.services.texture_service import TextureService
 from domain.interfaces.unit_of_work import UnitOfWork
@@ -44,7 +44,13 @@ class UploadTextureUseCase:
                     destination_path=get_texture_path(texture_hash, dto.type),
                 )
 
-                texture = await self._uow.textures.save(texture=Texture(hash=texture_hash, type=dto.type, url=url))
+                model: SkinModel | None = None
+                if dto.type == TextureType.SKIN:
+                    model = self._texture_service.detect_skin_model(skin_bytes=dto.file_bytes)
+
+                texture = await self._uow.textures.save(
+                    texture=Texture(hash=texture_hash, type=dto.type, url=url, model=model)
+                )
 
                 if dto.type == TextureType.SKIN:
                     head_3d = self._texture_service.generate_3d_head_from_skin(skin_bytes=dto.file_bytes)

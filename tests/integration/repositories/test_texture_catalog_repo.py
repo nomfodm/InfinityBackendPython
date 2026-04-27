@@ -60,6 +60,7 @@ async def test_get_by_id_not_found(db_session):
 
 async def test_get_by_id_or_raise_not_found(db_session):
     from domain.exceptions.wardrobe import TextureCatalogItemNotFoundError
+
     repo = SqlTextureCatalogRepository(db_session)
 
     with pytest.raises(TextureCatalogItemNotFoundError):

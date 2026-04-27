@@ -28,7 +28,6 @@ class TextureResponse:
 @dataclass(frozen=True)
 class WardrobeItemResponse:
     id: int | None
-    user_id: int
     author_id: int
     label: str
     acquired_at: datetime
@@ -38,7 +37,6 @@ class WardrobeItemResponse:
     def from_domain(cls, item: WardrobeItem):
         return cls(
             id=item.id,
-            user_id=item.user_id,
             author_id=item.author_id,
             label=item.label.value,
             acquired_at=item.acquired_at,

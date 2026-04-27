@@ -6,13 +6,13 @@ from uuid import uuid4
 import pytest
 
 from application.constants import VERIFICATION_CODE_TTL_SECONDS
+from application.use_cases.auth.reset_password import ResetPasswordRequest, ResetPasswordUseCase
 from application.use_cases.user.activate_user import ActivateUserRequest, ActivateUserUseCase
 from application.use_cases.user.change_email import ChangeEmailRequest, ChangeEmailUseCase
 from application.use_cases.user.change_password import ChangePasswordRequest, ChangePasswordUseCase
 from application.use_cases.user.change_username import ChangeUsernameRequest, ChangeUsernameUseCase
 from application.use_cases.user.me import MeUseCase
 from application.use_cases.user.minecraft_profile.change_nickname import ChangeNicknameRequest, ChangeNicknameUseCase
-from application.use_cases.user.reset_password import ResetPasswordRequest, ResetPasswordUseCase
 from application.use_cases.user.send_verification_code import SendVerificationCodeRequest, SendVerificationCodeUseCase
 from domain.entities.base import ContentLabel, Email, Url, UserRelatedHandle
 from domain.entities.user import BanStatus, User
@@ -27,20 +27,23 @@ from domain.interfaces.unit_of_work import UnitOfWork
 
 
 @pytest.mark.asyncio
-async def test_send_verification_code_success(mock_uow: UnitOfWork, mocker):
+async def test_send_verification_code_success(mock_uow: UnitOfWork, active_user: User, mocker):
     code_generator = mocker.MagicMock(spec=CodeGenerator)
     code_generator.generate.return_value = "123456"
     email_service = mocker.AsyncMock(spec=EmailService)
     uc = SendVerificationCodeUseCase(uow=mock_uow, email_service=email_service, code_generator=code_generator)
 
-    dto = SendVerificationCodeRequest(email=Email("player@example.com"), purpose=VerificationCodePurpose.ACTIVATION)
-    result = await uc.execute(dto=dto)
+    dto = SendVerificationCodeRequest(purpose=VerificationCodePurpose.ACTIVATION)
+    result = await uc.execute(dto=dto, user=active_user)
 
     mock_uow.verification_codes.save_code.assert_awaited_once_with(
-        email=dto.email, purpose=VerificationCodePurpose.ACTIVATION, code="123456", ttl=VERIFICATION_CODE_TTL_SECONDS
+        email=active_user.email,
+        purpose=VerificationCodePurpose.ACTIVATION,
+        code="123456",
+        ttl=VERIFICATION_CODE_TTL_SECONDS,
     )
-    email_service.send_verification_code.assert_awaited_once_with(email=dto.email, code="123456")
-    assert result.email == "player@example.com"
+    email_service.send_verification_code.assert_awaited_once_with(email=active_user.email, code="123456")
+    assert result.email == active_user.email.value
     assert result.expires_at.tzinfo is UTC
 
 
