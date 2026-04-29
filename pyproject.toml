@@ -1,7 +1,10 @@
 [project]
-name = "infinity_backend"
+name = "beacon"
 version = "0.1.0"
-description = "Add your description here"
+description = "Backend Service for Infinity MC Project"
+authors = [
+    "nomfodm"
+]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
