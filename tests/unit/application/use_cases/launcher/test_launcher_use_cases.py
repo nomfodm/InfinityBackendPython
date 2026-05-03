@@ -88,6 +88,7 @@ async def test_add_release_asset_success(mock_uow: UnitOfWork, admin_user: User)
             platform=Platform.WINDOWS,
             download_url=Url("https://example.com/launcher.exe"),
             checksum="deadbeef",
+            file_size=123456,
         ),
         user=admin_user,
     )

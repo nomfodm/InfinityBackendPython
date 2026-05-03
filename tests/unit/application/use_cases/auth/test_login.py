@@ -20,7 +20,12 @@ def uc(mock_hasher: StringHasher, mock_auth_service: AuthService, mock_uow: Unit
 
 @pytest.fixture
 def dto():
-    return UserLoginRequest(username=UserRelatedHandle("tester"), password="password")
+    return UserLoginRequest(
+        username=UserRelatedHandle("tester"),
+        password="password",
+        user_agent="Mozilla/5.0",
+        ip_address="127.0.0.1",
+    )
 
 
 @pytest.fixture
@@ -63,6 +68,26 @@ async def test_login_success_fails_invalid_credential_by_user(
         await uc.execute(dto=dto)
 
     mock_uow.commit.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_login_saves_user_agent_and_ip_address(
+    mock_uow: UnitOfWork, uc: LoginUseCase, mock_auth_service: AuthService, dto: UserLoginRequest
+):
+    await uc.execute(dto=dto)
+
+    session_tokens = mock_auth_service.create_session_and_tokens.return_value
+    assert session_tokens.session.user_agent == "Mozilla/5.0"
+    assert session_tokens.session.ip_address == "127.0.0.1"
+
+
+@pytest.mark.asyncio
+async def test_login_deletes_invalid_sessions(
+    mock_uow: UnitOfWork, uc: LoginUseCase, fake_user: User, dto: UserLoginRequest
+):
+    await uc.execute(dto=dto)
+
+    mock_uow.sessions.delete_invalid_by_user_id.assert_awaited_once_with(user_id=fake_user.id)
 
 
 @pytest.mark.asyncio

@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from domain.entities.base import UserRelatedHandle
@@ -55,3 +55,15 @@ class SqlMinecraftProfileRepository(MinecraftProfileRepository):
         if profile is None:
             raise MinecraftProfileNotFoundError("По непонятной причине, профиля для этого пользователя нет.")
         return profile
+
+    async def clear_active_cosmetics_for_wardrobe_items(self, wardrobe_item_ids: list[int]) -> None:
+        await self._session.execute(
+            update(MinecraftProfileModel)
+            .where(MinecraftProfileModel.active_skin_id.in_(wardrobe_item_ids))
+            .values(active_skin_id=None)
+        )
+        await self._session.execute(
+            update(MinecraftProfileModel)
+            .where(MinecraftProfileModel.active_cape_id.in_(wardrobe_item_ids))
+            .values(active_cape_id=None)
+        )

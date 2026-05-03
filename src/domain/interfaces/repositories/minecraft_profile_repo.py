@@ -36,3 +36,6 @@ class MinecraftProfileRepository(Protocol):
         if mc_profile is None:
             raise MinecraftProfileNotFoundError("По непонятной причине, профиля для этого пользователя нет.")
         return mc_profile
+
+    async def clear_active_cosmetics_for_wardrobe_items(self, *, wardrobe_item_ids: list[int]) -> None:
+        pass

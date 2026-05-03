@@ -26,6 +26,7 @@ def release() -> LauncherRelease:
                 platform=Platform.WINDOWS,
                 download_url=Url("https://example.com/launcher-1.3.0.exe"),
                 checksum="abc123",
+                file_size=123456,
             )
         ],
     )

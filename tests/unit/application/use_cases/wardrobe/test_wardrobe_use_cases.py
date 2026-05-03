@@ -132,6 +132,9 @@ async def test_remove_wardrobe_item_calls_delete(mock_uow: UnitOfWork, active_us
     result = await uc.execute(dto=RemoveWardrobeItemRequest(id=11), user=active_user)
 
     assert result.ok is True
+    mock_uow.minecraft_profiles.clear_active_cosmetics_for_wardrobe_items.assert_awaited_once_with(
+        wardrobe_item_ids=[item.id]
+    )
     mock_uow.wardrobe.delete.assert_awaited_once_with(item=item)
 
 
@@ -260,6 +263,7 @@ async def test_publish_texture_success(mock_uow: UnitOfWork, active_user: User):
 async def test_unpublish_texture_success(mock_uow: UnitOfWork, active_user: User):
     item = _catalog_item(author_id=active_user.id)
     mock_uow.texture_catalog.get_by_id_or_raise = AsyncMock(return_value=item)
+    mock_uow.wardrobe.get_ids_by_texture_id_except_user = AsyncMock(return_value=[])
     uc = UnpublishTextureUseCase(uow=mock_uow)
 
     result = await uc.execute(dto=UnpublishTextureRequest(id=item.id), user=active_user)
@@ -267,6 +271,55 @@ async def test_unpublish_texture_success(mock_uow: UnitOfWork, active_user: User
     assert result.ok is True
     mock_uow.texture_catalog.delete.assert_awaited_once_with(item=item)
     mock_uow.commit.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_unpublish_texture_deletes_others_wardrobe_items(mock_uow: UnitOfWork, active_user: User):
+    item = _catalog_item(author_id=active_user.id)
+    wardrobe_ids = [10, 20, 30]
+    mock_uow.texture_catalog.get_by_id_or_raise = AsyncMock(return_value=item)
+    mock_uow.wardrobe.get_ids_by_texture_id_except_user = AsyncMock(return_value=wardrobe_ids)
+    uc = UnpublishTextureUseCase(uow=mock_uow)
+
+    await uc.execute(dto=UnpublishTextureRequest(id=item.id), user=active_user)
+
+    mock_uow.wardrobe.get_ids_by_texture_id_except_user.assert_awaited_once_with(
+        texture_id=item.texture.id, except_user_id=active_user.id
+    )
+    mock_uow.minecraft_profiles.clear_active_cosmetics_for_wardrobe_items.assert_awaited_once_with(
+        wardrobe_item_ids=wardrobe_ids
+    )
+    mock_uow.wardrobe.delete_by_texture_id_except_user.assert_awaited_once_with(
+        texture_id=item.texture.id, except_user_id=active_user.id
+    )
+
+
+@pytest.mark.asyncio
+async def test_unpublish_texture_skips_cascade_when_no_wardrobe_items(mock_uow: UnitOfWork, active_user: User):
+    item = _catalog_item(author_id=active_user.id)
+    mock_uow.texture_catalog.get_by_id_or_raise = AsyncMock(return_value=item)
+    mock_uow.wardrobe.get_ids_by_texture_id_except_user = AsyncMock(return_value=[])
+    uc = UnpublishTextureUseCase(uow=mock_uow)
+
+    await uc.execute(dto=UnpublishTextureRequest(id=item.id), user=active_user)
+
+    mock_uow.minecraft_profiles.clear_active_cosmetics_for_wardrobe_items.assert_not_called()
+    mock_uow.wardrobe.delete_by_texture_id_except_user.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_change_player_cosmetics_clears_all_when_item_id_is_none(mock_uow: UnitOfWork, active_user: User):
+    mc_profile = SimpleNamespace(active_skin_id=11, active_cape_id=12)
+    mock_uow.minecraft_profiles.get_by_user_id_or_raise = AsyncMock(return_value=mc_profile)
+    uc = ChangePlayerCosmeticsUseCase(uow=mock_uow)
+
+    result = await uc.execute(dto=ChangePlayerCosmeticsRequest(item_id=None), user=active_user)
+
+    assert result.ok is True
+    assert mc_profile.active_skin_id is None
+    assert mc_profile.active_cape_id is None
+    mock_uow.minecraft_profiles.save.assert_awaited_once_with(profile=mc_profile)
+    mock_uow.wardrobe.get_by_id_from_user_wardrobe_or_raise.assert_not_called()
 
 
 @pytest.mark.asyncio

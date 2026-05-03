@@ -11,6 +11,7 @@ class LauncherReleaseResponse:
     platform: str
     download_url: str
     checksum: str
+    file_size: int
     changelog: list[str]
     released_at: datetime
     is_mandatory: bool
@@ -24,6 +25,7 @@ class LauncherReleaseResponse:
             platform=platform,
             download_url=asset.download_url.value,
             checksum=asset.checksum,
+            file_size=asset.file_size,
             changelog=release.changelog,
             released_at=release.released_at,
             is_mandatory=release.is_mandatory,

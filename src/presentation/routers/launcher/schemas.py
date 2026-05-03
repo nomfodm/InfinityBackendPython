@@ -26,6 +26,7 @@ class AddReleaseAssetRequest(BaseModel):
     platform: Platform
     download_url: str
     checksum: str
+    file_size: int
 
 
 class LauncherSessionRequest(BaseModel):

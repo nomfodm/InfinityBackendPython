@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from application.dtos.auth import SessionCredentials
-from application.dtos.launcher import CheckUpdateResponse
+from application.dtos.launcher import CheckUpdateResponse, LauncherReleaseResponse
 from application.dtos.minecraft_session import MinecraftSessionResponse, ProfileResponse
 from application.use_cases.auth.login import LoginUseCase, UserLoginRequest
 from application.use_cases.auth.logout import LogoutUseCase
@@ -12,6 +12,10 @@ from application.use_cases.auth.logout_from_others import LogoutFromOthersReques
 from application.use_cases.auth.refresh_session import RefreshSessionUseCase
 from application.use_cases.launcher.add_release_asset import AddReleaseAssetRequest, AddReleaseAssetUseCase
 from application.use_cases.launcher.check_update import CheckUpdateRequest, CheckUpdateUseCase
+from application.use_cases.launcher.get_latest_platform_release import (
+    GetLatestPlatformReleaseRequest,
+    GetLatestPlatformReleaseUseCase,
+)
 from application.use_cases.launcher.minecraft_session.create_minecraft_session import CreateMinecraftSessionUseCase
 from application.use_cases.launcher.minecraft_session.has_joined_server import HasJoinedRequest, HasJoinedServerUseCase
 from application.use_cases.launcher.minecraft_session.join_server import JoinServerRequest, JoinServerUseCase
@@ -22,7 +26,8 @@ from application.use_cases.launcher.publish_release import (
     PublishReleaseUseCase,
 )
 from domain.entities.base import MCAccessToken, MCServerID, SemVer, Url, UserRelatedHandle
-from presentation.dependencies.auth import CURRENT_USER
+from domain.entities.launcher import Platform
+from presentation.dependencies.auth import CI_ADMIN_USER, CURRENT_USER
 from presentation.routers.auth.schemas import LauncherLoginResponse, LoginRequest
 from presentation.routers.launcher.dependencies import (
     get_add_release_asset_uc,
@@ -30,6 +35,7 @@ from presentation.routers.launcher.dependencies import (
     get_create_mc_session_uc,
     get_has_joined_uc,
     get_join_server_uc,
+    get_latest_platform_release_uc,
     get_login_uc,
     get_logout_from_others_uc,
     get_logout_uc,
@@ -122,10 +128,18 @@ async def get_profile(
     return await uc.execute(dto=ProfileRequest(uuid=profile_uuid))
 
 
+@launcher_router.get("/releases/latest", response_model=LauncherReleaseResponse)
+async def get_latest_release(
+    platform: Platform,
+    uc: Annotated[GetLatestPlatformReleaseUseCase, Depends(get_latest_platform_release_uc)],
+):
+    return await uc.execute(dto=GetLatestPlatformReleaseRequest(platform=platform))
+
+
 @launcher_router.post("/releases", response_model=CreateReleaseResponse, status_code=201)
 async def publish_release(
     data: PublishReleaseSchema,
-    user: CURRENT_USER,
+    user: CI_ADMIN_USER,
     uc: Annotated[PublishReleaseUseCase, Depends(get_publish_release_uc)],
 ):
     return await uc.execute(
@@ -142,7 +156,7 @@ async def publish_release(
 async def add_release_asset(
     release_id: int,
     data: AddReleaseAssetSchema,
-    user: CURRENT_USER,
+    user: CI_ADMIN_USER,
     uc: Annotated[AddReleaseAssetUseCase, Depends(get_add_release_asset_uc)],
 ):
     await uc.execute(
@@ -151,6 +165,7 @@ async def add_release_asset(
             platform=data.platform,
             download_url=Url(data.download_url),
             checksum=data.checksum,
+            file_size=data.file_size,
         ),
         user=user,
     )

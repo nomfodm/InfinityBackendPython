@@ -10,6 +10,7 @@ from application.use_cases.auth.logout_from_others import LogoutFromOthersUseCas
 from application.use_cases.auth.refresh_session import RefreshSessionUseCase
 from application.use_cases.launcher.add_release_asset import AddReleaseAssetUseCase
 from application.use_cases.launcher.check_update import CheckUpdateUseCase
+from application.use_cases.launcher.get_latest_platform_release import GetLatestPlatformReleaseUseCase
 from application.use_cases.launcher.minecraft_session.create_minecraft_session import CreateMinecraftSessionUseCase
 from application.use_cases.launcher.minecraft_session.has_joined_server import HasJoinedServerUseCase
 from application.use_cases.launcher.minecraft_session.join_server import JoinServerUseCase
@@ -28,6 +29,10 @@ MC_PROFILE_SERVICE = Annotated[MinecraftProfileService, Depends(get_minecraft_pr
 
 def get_check_update_uc(uow: UOW) -> CheckUpdateUseCase:
     return CheckUpdateUseCase(uow=uow)
+
+
+def get_latest_platform_release_uc(uow: UOW) -> GetLatestPlatformReleaseUseCase:
+    return GetLatestPlatformReleaseUseCase(uow=uow)
 
 
 def get_create_mc_session_uc(uow: UOW) -> CreateMinecraftSessionUseCase:

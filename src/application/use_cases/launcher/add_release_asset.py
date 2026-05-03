@@ -14,6 +14,7 @@ class AddReleaseAssetRequest:
     platform: Platform
     download_url: Url
     checksum: str
+    file_size: int
 
 
 class AddReleaseAssetUseCase:
@@ -26,7 +27,11 @@ class AddReleaseAssetUseCase:
             await self._uow.launcher_releases.get_by_id_or_raise(id=dto.release_id)
 
             asset = LauncherReleaseAsset(
-                platform=dto.platform, download_url=dto.download_url, release_id=dto.release_id, checksum=dto.checksum
+                platform=dto.platform,
+                download_url=dto.download_url,
+                release_id=dto.release_id,
+                checksum=dto.checksum,
+                file_size=dto.file_size,
             )
 
             await self._uow.launcher_releases.save_launcher_release_asset(asset=asset)

@@ -23,6 +23,7 @@ def make_asset(release_id: int, platform: Platform = Platform.WINDOWS) -> Launch
         platform=platform,
         download_url=Url(f"https://cdn.example.com/launcher-{platform.value}.zip"),
         checksum="abc" * 20,
+        file_size=123456,
     )
 
 

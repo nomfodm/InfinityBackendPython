@@ -41,6 +41,10 @@ class RSASettings(BaseSettings):
     private_key_pem: SecretStr
 
 
+class SecretsSettings(BaseSettings):
+    ci_token: SecretStr
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -53,6 +57,7 @@ class Settings(BaseSettings):
     s3: S3Settings = Field(default_factory=S3Settings)
     smtp: SMTPSettings = Field(default_factory=SMTPSettings)
     rsa: RSASettings = Field(default_factory=RSASettings)
+    secrets: SecretsSettings = Field(default_factory=SecretsSettings)
 
 
 settings = Settings()

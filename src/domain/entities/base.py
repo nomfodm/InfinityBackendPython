@@ -62,7 +62,7 @@ class Url(IdentName):
 
     def _validate(self):
         if not self._pattern.match(self.value):
-            raise ValueError(f"Invalid URL format: {self.value}")
+            raise ValidationError(f"Invalid URL format: {self.value}")
 
 
 @dataclass(frozen=True)

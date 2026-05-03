@@ -16,6 +16,7 @@ class LauncherReleaseAsset:
     platform: Platform
     download_url: Url
     checksum: str  # SHA256
+    file_size: int
     release_id: int | None = None
     id: int | None = None
 

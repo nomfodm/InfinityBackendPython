@@ -18,6 +18,8 @@ class UserRegisterRequest:
     email: Email
     username: UserRelatedHandle
     password: str
+    user_agent: str | None
+    ip_address: str | None
 
 
 class RegisterUserAndLoginUseCase:
@@ -52,6 +54,9 @@ class RegisterUserAndLoginUseCase:
 
             # log in
             session_tokens = self._auth_service.create_session_and_tokens(user_id=saved_user.id)
+            session_tokens.session.user_agent = dto.user_agent
+            session_tokens.session.ip_address = dto.ip_address
+            session_tokens.session.last_used_at = datetime.datetime.now(UTC)
             await self._uow.sessions.save(session=session_tokens.session)
 
             await self._uow.commit()

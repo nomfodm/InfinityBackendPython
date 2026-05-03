@@ -25,11 +25,14 @@ class RevokeSessionUseCase:
             self._auth_service.verify_session(refresh_token=dto.session_credentials.refresh_token, session=session)
 
             if session.id == dto.session_id_to_revoke:
-                raise CannotRevokeSessionError("Нельзя отозвать свою же сессию.")
+                raise CannotRevokeSessionError("Нельзя отозвать текущую сессию.")
 
             session_to_revoke = await self._uow.sessions.get_by_id_or_raise(uuid=dto.session_id_to_revoke)
             if session.user_id != session_to_revoke.user_id:
                 raise CannotRevokeSessionError("Нельзя отозвать чужую сессию.")
+
+            if session_to_revoke.is_revoked:
+                raise CannotRevokeSessionError("Сессия уже отозвана.")
 
             session_to_revoke.is_revoked = True
 

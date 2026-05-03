@@ -36,7 +36,7 @@ class MeUseCase:
     def __init__(self, *, uow: UnitOfWork):
         self._uow = uow
 
-    @require_login
+    # @require_login
     async def execute(self, *, user: User) -> UserResponse:
         async with self._uow:
             mc_profile = await self._uow.minecraft_profiles.get_by_user_id_or_raise(user_id=user.id)

@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import Response
 
 from application.use_cases.auth.get_sessions import GetSessionsUseCase, SessionResponse
@@ -49,6 +49,7 @@ REFRESH_COOKIE_PARAMS = {
 
 @auth_router.post("/login", response_model=LoginResponse)
 async def login(
+    request: Request,
     response: Response,
     data: LoginRequest,
     uc: Annotated[LoginUseCase, Depends(get_login_uc)],
@@ -57,6 +58,8 @@ async def login(
         dto=UserLoginRequest(
             username=UserRelatedHandle(data.username),
             password=data.password,
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
         )
     )
     response.set_cookie(value=result.refresh_split_token, **REFRESH_COOKIE_PARAMS)
@@ -65,6 +68,7 @@ async def login(
 
 @auth_router.post("/signup", response_model=LoginResponse, status_code=201)
 async def signup(
+    request: Request,
     response: Response,
     data: SignupRequest,
     uc: Annotated[RegisterUserAndLoginUseCase, Depends(get_register_user_and_login_uc)],
@@ -74,6 +78,8 @@ async def signup(
             username=UserRelatedHandle(data.username),
             password=data.password,
             email=Email(str(data.email)),
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
         )
     )
     response.set_cookie(value=result.refresh_split_token, **REFRESH_COOKIE_PARAMS)

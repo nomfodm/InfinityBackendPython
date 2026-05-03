@@ -48,6 +48,7 @@ class LauncherReleaseAssetModel(Base):
     platform: Mapped[str]
     download_url: Mapped[str]
     checksum: Mapped[str]
+    file_size: Mapped[int]
 
     def to_domain(self) -> LauncherReleaseAsset:
         return LauncherReleaseAsset(
@@ -56,6 +57,7 @@ class LauncherReleaseAssetModel(Base):
             platform=Platform(self.platform),
             download_url=Url(self.download_url),
             checksum=self.checksum,
+            file_size=self.file_size,
         )
 
     @classmethod
@@ -66,4 +68,5 @@ class LauncherReleaseAssetModel(Base):
             platform=lra.platform.value,
             download_url=lra.download_url.value,
             checksum=lra.checksum,
+            file_size=lra.file_size,
         )

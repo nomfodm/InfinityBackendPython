@@ -21,6 +21,9 @@ class ChangeEmailUseCase:
     @require_not_banned
     async def execute(self, *, dto: ChangeEmailRequest, user: User) -> StatusResponse:
         async with self._uow:
+            if user.email == dto.new_email:
+                raise EmailTakenError("Вы ввели такой же E-mail.")
+
             existing_email = await self._uow.users.get_by_email(email=dto.new_email)
             if existing_email and existing_email.id != user.id:
                 raise EmailTakenError("Этот E-mail занят.")

@@ -22,3 +22,9 @@ class WardrobeItemRepository(Protocol):
 
     async def get_user_wardrobe(self, *, user_id: int) -> list[WardrobeItem]:
         pass
+
+    async def get_ids_by_texture_id_except_user(self, *, texture_id: int, except_user_id: int) -> list[int]:
+        pass
+
+    async def delete_by_texture_id_except_user(self, *, texture_id: int, except_user_id: int) -> None:
+        pass

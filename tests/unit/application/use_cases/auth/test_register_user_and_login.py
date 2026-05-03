@@ -18,7 +18,13 @@ def uc(mocker: MockerFixture, mock_auth_service: AuthService, mock_uow: UnitOfWo
 
 @pytest.fixture
 def dto():
-    return UserRegisterRequest(email=Email("test@a.com"), username=UserRelatedHandle("tester"), password="123")
+    return UserRegisterRequest(
+        email=Email("test@a.com"),
+        username=UserRelatedHandle("tester"),
+        password="123",
+        user_agent="Mozilla/5.0",
+        ip_address="127.0.0.1",
+    )
 
 
 @pytest.fixture
@@ -42,6 +48,29 @@ async def test_register_user_and_login_success(
     assert result.refresh_split_token == "uuid.refresh_token"
 
     mock_uow.commit.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_register_creates_minecraft_profile(
+    mock_uow: UnitOfWork, uc: RegisterUserAndLoginUseCase, fake_user: User, dto: UserRegisterRequest
+) -> None:
+    await uc.execute(dto=dto)
+
+    mock_uow.minecraft_profiles.save.assert_awaited_once()
+    saved_profile = mock_uow.minecraft_profiles.save.call_args.kwargs["profile"]
+    assert saved_profile.user_id == fake_user.id
+    assert saved_profile.nickname == dto.username
+
+
+@pytest.mark.asyncio
+async def test_register_saves_user_agent_and_ip_address(
+    mock_uow: UnitOfWork, uc: RegisterUserAndLoginUseCase, mock_auth_service: AuthService, dto: UserRegisterRequest
+) -> None:
+    await uc.execute(dto=dto)
+
+    session_tokens = mock_auth_service.create_session_and_tokens.return_value
+    assert session_tokens.session.user_agent == "Mozilla/5.0"
+    assert session_tokens.session.ip_address == "127.0.0.1"
 
 
 @pytest.mark.asyncio
